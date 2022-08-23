@@ -1,0 +1,105 @@
+const route = require('express').Router();
+const { Product, Category} = require('../db.js');
+const { Sequelize } = require('sequelize')
+
+
+
+//GET:todos los productos
+
+route.get('/', (req, res, next) => {
+		Product.findAll()
+			.then(products => {
+				res.send(products);
+			})
+			.catch(next);
+	});
+
+    /*
+route.get('/', async (req, res, next)=> {
+    try{
+        const products = await Products.findAll({include: Category})
+        return res.json(products)
+    } catch(error){
+        res.send(error)
+        next()
+    }
+})
+    */
+
+
+//GET: todos los detalles de un producto
+
+route.get('/:id', (req, res, next) => {
+if(req.params.id === Number(req.params.id)){
+Product.findByPk(req.params.id,
+    {include : Category})
+    .then(function(product) {
+        res.send(product)
+    }).catch(next);
+}else{
+    next();
+}
+});
+
+  /*
+route.get('/:id', async (req, res, next)=> {
+    try{
+        const { id } = req.params
+        if(id === Number(id)){
+            const product = await Product.findByPk(id, { include: Category})
+            res.json (product)
+        } else {
+            alert("ID not found")
+        }
+    } catch(error){
+        res.send(error)
+        next()
+    }
+})
+*/
+
+
+//GET: segun el keyword de búsqueda: /search?query={valor}
+
+route.get('/search', (req, res, next) => {
+    const { name } = req.query
+    let lowerName = name.charAt(0).toLowerCase() + name.slice(1)
+    Product.findAll({
+		where: {
+			[Op.or]: [
+			{ name:{[Op.iLike]: `%${lowerName}%`} },
+			{ description:{[Op.iLike]:  `%${lowerName}%`}}
+			]},
+			include: Category})
+            .then(function(products) {
+				res.send(products)
+			}).catch(next);
+
+});
+
+  /*
+route.get('/search', async (req, res, next)=> {
+    try{
+        const { name } = req.query
+        if(name){
+            let lowerName = name.charAt(0).toLowerCase() + name.slice(1)
+            const product = await Product.findAll({
+               where: {
+                    nombre: { [Op.iLike]: `%${lowerName}%`}},
+                     include: Category})  //join de las tablas
+            res.json (product)
+        } else {
+            const allProducts = await Products.findAll({
+                include: Category
+            })
+            return res.json(allProducts)
+        }
+    } catch(error){
+        res.send(error)
+        next()
+    }
+})
+*/
+
+
+module.exports = route

@@ -1,0 +1,80 @@
+const route = require('express').Router();
+const { Product, Category} = require('../db.js');
+const { Sequelize } = require('sequelize')
+
+//GET: todas las categorías existentes
+
+route.get('/', (req, res, next) => {
+ 	Category.findAll()
+	    .then(categories => {res.send(categories);})
+        .catch(next);
+});
+
+/*
+route.get('/category', async (req, res, next) => {
+ 	try{
+        const categories = await Category.findAll()
+        return res.json(categories)
+    }
+    catch(error){
+        res.send(error)
+        next()
+    }
+});
+*/
+
+//GET: los producto de X categoría
+
+route.get('/:name', (req, res, next) => {
+	const { name } = req.params
+        Category.findAll({
+		where: { name: name } , include: Product })
+        .then(category=>{res.send(category);})
+        .catch(next);
+		});
+
+/*
+route.get('/category/:name', async (req, res, next) => {
+ 	try{
+        const { name } = req.params
+        if(name)
+        const category = await Category.findAll(name, {inculde: Product})
+        return res.json(category)
+    }
+    catch(error){
+        res.send(error)
+        next()
+    }
+});
+*/
+
+//GET: category por id
+
+route.get('/:id', (req, res, next) => {
+    if(req.params.id === Number(req.params.id)){
+    Product.findByPk(req.params.id,
+        {include : Product})
+        .then(function(category) {
+            res.send(category)
+        }).catch(next);
+    }else{
+        alert("ID not found");
+    }
+    });
+    
+      /*
+    route.get('/', async (req, res, next)=> {
+        try{
+            const { id } = req.params
+            if(id === Number(id)){
+                const product = await Category.findByPk(id, { include: Product})
+                res.json (product)
+            } else {
+                alert("ID not found")
+            }
+        } catch(error){
+            res.send(error)
+            next()
+        }
+    })
+    */
