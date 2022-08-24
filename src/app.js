@@ -2,6 +2,8 @@ const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
+const productsRouter = require("./routes/products");
+const categoryRouter = require("./routes/category");
 
 require("./db.js");
 
@@ -29,5 +31,8 @@ app.use((err, req, res, next) => {
   console.error(err);
   res.status(status).send(message);
 });
+
+app.use("/products", productsRouter);
+app.use("/category", categoryRouter);
 
 module.exports = app;
