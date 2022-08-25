@@ -6,9 +6,9 @@ const { Product, Category } = require("../db.js");
 const { Sequelize, Op } = require("sequelize");
 
 //GET:todos los productos
-//Cambie de promesas a async await para poder tener un mejor manejo de errores. 
-//Utilizo un ternario en el return para en el caso que vuelva un arreglo vacio se pueda enviar un mensaje de que no se encontraron productos. 
-//dejo comentadas algunas lineas de promesas por si se me paso algun dato o haya que modificar algo. Despues cuando ya quede eliminamos los comentarios. 
+//Cambie de promesas a async await para poder tener un mejor manejo de errores.
+//Utilizo un ternario en el return para en el caso que vuelva un arreglo vacio se pueda enviar un mensaje de que no se encontraron productos.
+//dejo comentadas algunas lineas de promesas por si se me paso algun dato o haya que modificar algo. Despues cuando ya quede eliminamos los comentarios.
 //Fede.
 route.get("/", async (req, res, next) => {
   const { query } = req.query;
@@ -73,20 +73,29 @@ route.get("/", async (req, res, next) => {
 // 	});
 
 //GET: todos los detalles de un producto
-route.get("/:id", (req, res, next) => {
-  if (req.params.id === Number(req.params.id)) {
-    Product.findByPk(req.params.id, { include: Category })
-      .then(function (product) {
-        res.send(product);
-      })
-      .catch(next);
-  } else {
-    next();
+//Cambie de promesas a async await para poder tener un mejor manejo de errores.
+//Fede
+route.get("/:id", async (req, res, next) => {
+  const id = Number(req.params);
+  if (id) {
+    try {
+      const product_Id = await Product.findByPk(id, { include: Category });
+      return countryId
+        ? res.status(200).json(product_Id)
+        : res.status(404).send("Product Not Found");
+    } catch (error) {
+      console.log(error);
+      res.status(404).send(error);
+    }
   }
 });
 
 //POST: crear nuevo producto. faltaria validar que solo pueda hacerlo un admin
-route.post("/", (req, res, next) => {
+//Cambie de promesas a async await para poder tener un mejor manejo de errores.
+//Cambie "create" por "findorcreate" para chequear que el producto no exista todavia, si existe devuelve en la variable "created" un false y la tomo en el condicional para devolver un mensaje de error informando que ya existe ese producto. 
+//en caso de que haya algun error el catch lo captura y devuelve el mensaje de error. 
+//Fede
+route.post("/", async (req, res, next) => {
   const {
     name,
     longDescription,
@@ -97,9 +106,10 @@ route.post("/", (req, res, next) => {
     shortDescription,
   } = req.body;
   if (!name || !longDescription || !price || !stock) {
-    res.status(400).send("Some data is missing");
-  } else {
-    Product.create({
+    return res.status(400).send("Some data is missing");
+  }
+  try {
+    let [row, created] = await Product.create({
       name: name,
       longDescription: longDescription,
       shortDescription: shortDescription,
@@ -107,12 +117,13 @@ route.post("/", (req, res, next) => {
       stock: stock,
       image: image,
       status: statusId,
-    })
-      .then(function (product) {
-        res.status(201);
-        res.send(product);
-      })
-      .catch(next);
+    });
+    return !created
+      ? res.status(404).send(`${name} already exist`)
+      : res.status(200).json(row);
+  } catch (err) {
+    console.log(err.message);
+    res.status(404).json(err.message);
   }
 });
 
