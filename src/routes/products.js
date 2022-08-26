@@ -11,23 +11,25 @@ const { Sequelize, Op } = require("sequelize");
 //dejo comentadas algunas lineas de promesas por si se me paso algun dato o haya que modificar algo. Despues cuando ya quede eliminamos los comentarios.
 //Fede.
 route.get("/", async (req, res, next) => {
-  const { query } = req.query;
-  const name = query.toLowerCase();
+  let {name} = req.query
+  name ? name = name.toLowerCase() : null
+
   try {
     if (name) {
       // let lowerName = name.toLowerCase()
       let product_Name = await Product.findAll({
         where: {
-          [Op.or]: [
-            { name: { [Op.iLike]: `%${name}%` } },
-            { description: { [Op.iLike]: `%${name}%` } },
-          ],
+            [Op.or]: [
+              { name: { [Op.iLike]: `%${name}%` } },
+              { longDescription: { [Op.iLike]: `%${name}%` } },
+            ],          
         },
-        include: Category,
+        // include: Category,
       });
       // .then(function(products) {
       //         res.send(products)
       // }).catch(next);
+      console.log(product_Name)
       return product_Name.length
         ? res.status(200).send(product_Name)
         : res.status(404).send("Product Not Found");
