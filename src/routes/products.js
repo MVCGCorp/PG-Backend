@@ -6,30 +6,21 @@ const { Product, Category } = require("../db.js");
 const { Sequelize, Op } = require("sequelize");
 
 //GET:todos los productos
-//Cambie de promesas a async await para poder tener un mejor manejo de errores.
-//Utilizo un ternario en el return para en el caso que vuelva un arreglo vacio se pueda enviar un mensaje de que no se encontraron productos.
-//dejo comentadas algunas lineas de promesas por si se me paso algun dato o haya que modificar algo. Despues cuando ya quede eliminamos los comentarios.
-//Fede.
 route.get("/", async (req, res, next) => {
-  let {name} = req.query
-  name ? name = name.toLowerCase() : null
+  let { name } = req.query;
+  name ? (name = name.toLowerCase()) : null;
 
   try {
     if (name) {
-      // let lowerName = name.toLowerCase()
       let product_Name = await Product.findAll({
         where: {
-            [Op.or]: [
-              { name: { [Op.iLike]: `%${name}%` } },
-              { longDescription: { [Op.iLike]: `%${name}%` } },
-            ],          
+          [Op.or]: [
+            { name: { [Op.iLike]: `%${name}%` } },
+            { longDescription: { [Op.iLike]: `%${name}%` } },
+          ],
         },
         // include: Category,
       });
-      // .then(function(products) {
-      //         res.send(products)
-      // }).catch(next);
-      console.log(product_Name)
       return product_Name.length
         ? res.status(200).send(product_Name)
         : res.status(404).send("Product Not Found");
@@ -39,10 +30,6 @@ route.get("/", async (req, res, next) => {
       return product_All.length
         ? res.status(200).send(product_All)
         : res.status(404).send("No products on DataBase");
-
-      // .then(products => {
-      //   res.send(products);
-      // }).catch(next);
     }
   } catch (error) {
     console.log(error);
@@ -50,39 +37,13 @@ route.get("/", async (req, res, next) => {
   }
 });
 
-// //GET:todos los productos
-// route.get('/', (req, res, next) => {
-//     const { name } = req.query
-//     if(name){
-//       let lowerName = name.toLowerCase()
-//         Product.findAll({
-//             where: {
-//                 [Op.or]: [
-//                 { name:{[Op.iLike]: `%${lowerName}%`} },
-//                 { description:{[Op.iLike]:  `%${lowerName}%`}}
-//                 ]},
-//                 include: Category})
-//             .then(function(products) {
-//                     res.send(products)
-//             }).catch(next);
-//     }else {
-//         Product.findAll()
-// 			.then(products => {
-// 				res.send(products);
-// 			}).catch(next);
-//     }
-
-// 	});
-
 //GET: todos los detalles de un producto
-//Cambie de promesas a async await para poder tener un mejor manejo de errores.
-//Fede
 route.get("/:id", async (req, res, next) => {
-  const id = Number(req.params);
+  const { id } = req.params;
   if (id) {
     try {
-      const product_Id = await Product.findByPk(id, { include: Category });
-      return countryId
+      const product_Id = await Product.findByPk(id);
+      return product_Id
         ? res.status(200).json(product_Id)
         : res.status(404).send("Product Not Found");
     } catch (error) {
@@ -93,10 +54,6 @@ route.get("/:id", async (req, res, next) => {
 });
 
 //POST: crear nuevo producto. faltaria validar que solo pueda hacerlo un admin
-//Cambie de promesas a async await para poder tener un mejor manejo de errores.
-//Cambie "create" por "findorcreate" para chequear que el producto no exista todavia, si existe devuelve en la variable "created" un false y la tomo en el condicional para devolver un mensaje de error informando que ya existe ese producto. 
-//en caso de que haya algun error el catch lo captura y devuelve el mensaje de error. 
-//Fede
 route.post("/", async (req, res, next) => {
   const {
     name,
@@ -114,13 +71,13 @@ route.post("/", async (req, res, next) => {
     let [productSaved, created] = await Product.findOrCreate({
       where: { name: name },
       defaults: {
-      longDescription: longDescription,
-      shortDescription: shortDescription,
-      price: price,
-      stock: stock,
-      image: image,
-      status: statusId,
-      }
+        longDescription: longDescription,
+        shortDescription: shortDescription,
+        price: price,
+        stock: stock,
+        image: image,
+        status: statusId,
+      },
     });
     return !created
       ? res.status(404).send(`${name} already exist`)
@@ -133,18 +90,17 @@ route.post("/", async (req, res, next) => {
 
 // DELETE: eliminar producto, falta validacion para que solo lo pueda hacer el admin
 
-route.delete('/:id', async (req, res, next) => {
-  const { id } = Number(req.params)
-      try{
-          const deletedProduct = await Product.destroy({
-              where:{
-                  id
-              }
-          });
-          return res.json(deletedProduct)
-      }catch(error){
-          next(error)
-      }
-  });
-
+route.delete("/:id", async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const deletedProduct = await Product.destroy({
+      where: {
+        id,
+      },
+    });
+    return res.json(deletedProduct);
+  } catch (error) {
+    console.log(error);
+  }
+});
 module.exports = route;
