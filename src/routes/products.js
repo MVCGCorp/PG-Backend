@@ -129,4 +129,20 @@ route.post("/", async (req, res, next) => {
   }
 });
 
+// DELETE: eliminar producto, falta validacion para que solo lo pueda hacer el admin
+
+route.delete('/:id', async (req, res, next) => {
+  const { id } = Number(req.params)
+      try{
+          const deletedProduct = await Product.destroy({
+              where:{
+                  id
+              }
+          });
+          return res.json(deletedProduct)
+      }catch(error){
+          next(error)
+      }
+  });
+
 module.exports = route;
