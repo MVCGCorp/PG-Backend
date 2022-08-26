@@ -97,7 +97,7 @@ route.delete("/:id", async (req, res, next) => {
       where: {
         id,
       },
-    });
+    }); 
     return res.json(deletedProduct);
   } catch (error) {
     console.log(error);
