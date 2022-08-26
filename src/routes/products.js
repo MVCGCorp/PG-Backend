@@ -16,7 +16,7 @@ route.get("/", async (req, res, next) => {
   try {
     if (name) {
       // let lowerName = name.toLowerCase()
-      const product_Name = await Product.findAll({
+      let product_Name = await Product.findAll({
         where: {
           [Op.or]: [
             { name: { [Op.iLike]: `%${name}%` } },
@@ -109,18 +109,20 @@ route.post("/", async (req, res, next) => {
     return res.status(400).send("Some data is missing");
   }
   try {
-    let [row, created] = await Product.create({
-      name: name,
+    let [productSaved, created] = await Product.findOrCreate({
+      where: { name: name },
+      defaults: {
       longDescription: longDescription,
       shortDescription: shortDescription,
       price: price,
       stock: stock,
       image: image,
       status: statusId,
+      }
     });
     return !created
       ? res.status(404).send(`${name} already exist`)
-      : res.status(200).json(row);
+      : res.status(200).json(productSaved);
   } catch (err) {
     console.log(err.message);
     res.status(404).json(err.message);
