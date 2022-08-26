@@ -42,7 +42,7 @@ route.get("/:id", async (req, res, next) => {
   const { id } = req.params;
   if (id) {
     try {
-      const product_Id = await Product.findByPk(id);
+      const product_Id = await Product.findByPk(id, { include: Category });
       return product_Id
         ? res.status(200).json(product_Id)
         : res.status(404).send("Product Not Found");
