@@ -25,7 +25,9 @@ route.get("/", async (req, res) => {
     } else {
       const allCategories = await Category.findAll();
 
-      return res.status(200).send(allCategories);
+      return allCategories.length
+      ? res.status(200).send(allCategories)
+      : res.status(404).send("No Categories on DataBase");
     }
   } catch (error) {
     console.log(error);
