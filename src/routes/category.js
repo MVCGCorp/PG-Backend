@@ -70,5 +70,26 @@ route.delete("/:id", async (req, res) => {
   }      
 });
 
+route.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    name
+  } = req.body;
+  console.log(name)
 
+  // if (!id){ return res.status(404).send("Product id is required")}
+
+  try {
+    const category_Id = await Category.update({
+      name
+    },
+    {where: {
+      id: id
+    }});
+    res.status(200).send(`${category_Id} category has been modify`);
+  } catch (error) {
+    console.log(error)
+    res.send(error);
+  }
+});
 module.exports = route
