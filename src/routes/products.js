@@ -63,8 +63,9 @@ route.post("/", async (req, res, next) => {
     image,
     statusId,
     shortDescription,
+    category,
   } = req.body;
-  if (!name || !longDescription || !price || !stock) {
+  if (!name || !longDescription || !price || !stock || !category) {
     return res.status(400).send("Some data is missing");
   }
   try {
@@ -79,6 +80,13 @@ route.post("/", async (req, res, next) => {
         status: statusId,
       },
     });
+    const match = await Category.findOne({
+      where: {
+        name: category,
+      },
+    });
+
+    await productSaved.setCategory(match);
     return !created
       ? res.status(404).send(`${name} already exist`)
       : res.status(200).json(productSaved);
@@ -97,7 +105,7 @@ route.delete("/:id", async (req, res, next) => {
       where: {
         id,
       },
-    }); 
+    });
     return res.json(deletedProduct);
   } catch (error) {
     console.log(error);
