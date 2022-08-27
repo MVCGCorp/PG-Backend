@@ -111,4 +111,42 @@ route.delete("/:id", async (req, res, next) => {
     console.log(error);
   }
 });
+
+route.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    name,
+    longDescription,
+    price,
+    stock,
+    image,
+    statusId,
+    shortDescription,
+  } = req.body;
+  console.log(price)
+
+  // if (!id){ return res.status(404).send("Product id is required")}
+
+  try {
+    // const product_Id = await Product.findByPk(id, { include: Category });
+    // console.log(product_Id)
+    const product_Id = await Product.update({
+      name,
+      longDescription,
+      price,
+      stock,
+      image,
+      statusId,
+      shortDescription,
+    },
+    {where: {
+      id: id
+    }});
+    res.status(200).send(`${product_Id} product has been modify`);
+  } catch (error) {
+    console.log(error)
+    res.send(error);
+  }
+});
+
 module.exports = route;
