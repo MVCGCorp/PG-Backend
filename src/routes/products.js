@@ -122,14 +122,28 @@ route.put("/:id", async (req, res) => {
     image,
     statusId,
     shortDescription,
+    category
   } = req.body;
   console.log(price)
 
   // if (!id){ return res.status(404).send("Product id is required")}
 
   try {
-    // const product_Id = await Product.findByPk(id, { include: Category });
-    // console.log(product_Id)
+
+    if(category){
+      const product = await Product.findByPk(id)
+      // console.log('product', product.toJSON())
+      const match = await Category.findOne({
+        where: {
+          name: category,
+        },
+      });
+      // console.log('match', match.toJSON())
+      if(match){ 
+      await product.setCategory(match);
+      }
+    }
+
     const product_Id = await Product.update({
       name,
       longDescription,
@@ -138,6 +152,7 @@ route.put("/:id", async (req, res) => {
       image,
       statusId,
       shortDescription,
+      category
     },
     {where: {
       id: id

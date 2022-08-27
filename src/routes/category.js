@@ -75,9 +75,6 @@ route.put("/:id", async (req, res) => {
   const {
     name
   } = req.body;
-  console.log(name)
-
-  // if (!id){ return res.status(404).send("Product id is required")}
 
   try {
     const category_Id = await Category.update({
