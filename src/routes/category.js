@@ -70,5 +70,23 @@ route.delete("/:id", async (req, res) => {
   }      
 });
 
+route.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    name
+  } = req.body;
 
+  try {
+    const category_Id = await Category.update({
+      name
+    },
+    {where: {
+      id: id
+    }});
+    res.status(200).send(`${category_Id} category has been modify`);
+  } catch (error) {
+    console.log(error)
+    res.send(error);
+  }
+});
 module.exports = route
