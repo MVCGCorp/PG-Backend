@@ -61,7 +61,7 @@ route.post("/", async (req, res, next) => {
     price,
     stock,
     image,
-    statusId,
+    // statusId,
     shortDescription,
     category,
   } = req.body;
@@ -77,16 +77,15 @@ route.post("/", async (req, res, next) => {
         price: price,
         stock: stock,
         image: image,
-        status: statusId,
+        // status: statusId,
       },
     });
-    const match = await Category.findOne({
+    const match = await Category.findAll({
       where: {
-        name: category,
+        name: category
       },
     });
-
-    await productSaved.setCategory(match);
+    await productSaved.addCategory(match);
     return !created
       ? res.status(404).send(`${name} already exist`)
       : res.status(200).json(productSaved);
@@ -133,14 +132,14 @@ route.put("/:id", async (req, res) => {
     if(category){
       const product = await Product.findByPk(id)
       // console.log('product', product.toJSON())
-      const match = await Category.findOne({
+      const match = await Category.findAll({
         where: {
           name: category,
         },
       });
       // console.log('match', match.toJSON())
       if(match){ 
-      await product.setCategory(match);
+      await product.addCategory(match);
       }
     }
 
