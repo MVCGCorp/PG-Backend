@@ -61,10 +61,11 @@ route.post("/", async (req, res, next) => {
     price,
     stock,
     image,
-    statusId,
+    // statusId,
     shortDescription,
+    category,
   } = req.body;
-  if (!name || !longDescription || !price || !stock) {
+  if (!name || !longDescription || !price || !stock || !category) {
     return res.status(400).send("Some data is missing");
   }
   try {
@@ -76,9 +77,15 @@ route.post("/", async (req, res, next) => {
         price: price,
         stock: stock,
         image: image,
-        status: statusId,
+        // status: statusId,
       },
     });
+    const match = await Category.findAll({
+      where: {
+        name: category
+      },
+    });
+    await productSaved.addCategory(match);
     return !created
       ? res.status(404).send(`${name} already exist`)
       : res.status(200).json(productSaved);
@@ -97,10 +104,63 @@ route.delete("/:id", async (req, res, next) => {
       where: {
         id,
       },
-    }); 
+    });
     return res.json(deletedProduct);
   } catch (error) {
     console.log(error);
   }
 });
+
+route.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    name,
+    longDescription,
+    price,
+    stock,
+    image,
+    statusId,
+    shortDescription,
+    category
+  } = req.body;
+  console.log(price)
+
+  // if (!id){ return res.status(404).send("Product id is required")}
+
+  try {
+
+    if(category){
+      const product = await Product.findByPk(id)
+      // console.log('product', product.toJSON())
+      const match = await Category.findAll({
+        where: {
+          name: category,
+        },
+      });
+      // console.log('match', match.toJSON())
+      if(match){ 
+      await product.addCategory(match);
+      }
+    }
+
+    const product_Id = await Product.update({
+      name,
+      longDescription,
+      price,
+      stock,
+      image,
+      statusId,
+      shortDescription,
+      category
+    },
+    {where: {
+      id: id
+    }});
+    res.status(200).send(`${product_Id} product has been modify`);
+  } catch (error) {
+    console.log(error)
+    res.send(error);
+  }
+});
+
 module.exports = route;

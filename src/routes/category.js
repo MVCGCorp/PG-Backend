@@ -25,7 +25,9 @@ route.get("/", async (req, res) => {
     } else {
       const allCategories = await Category.findAll();
 
-      return res.status(200).send(allCategories);
+      return allCategories.length
+      ? res.status(200).send(allCategories)
+      : res.status(404).send("No Categories on DataBase");
     }
   } catch (error) {
     console.log(error);
@@ -68,5 +70,23 @@ route.delete("/:id", async (req, res) => {
   }      
 });
 
+route.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    name
+  } = req.body;
 
+  try {
+    const category_Id = await Category.update({
+      name
+    },
+    {where: {
+      id: id
+    }});
+    res.status(200).send(`${category_Id} category has been modify`);
+  } catch (error) {
+    console.log(error)
+    res.send(error);
+  }
+});
 module.exports = route
