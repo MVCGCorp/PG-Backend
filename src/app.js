@@ -36,4 +36,9 @@ app.use((err, req, res, next) => {
 app.use("/products", productsRouter);
 app.use("/category", categoryRouter);
 
+app.get('/', (req, res) => {
+  res.send('HELLO!! Some usefull information ----->   /products to go to the products route --- /category to go to the category routes')
+})
+
+
 module.exports = app;
