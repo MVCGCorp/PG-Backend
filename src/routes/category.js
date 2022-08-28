@@ -8,15 +8,15 @@ const { Sequelize, Op } = require("sequelize");
 // GET por nombre y todas. 
 
 route.get("/", async (req, res) => {
-  const { name } = req.query;
- console.log(name)
+  let { name } = req.query;
+  name ? (name = name.toLowerCase()) : null;
+  
   try {
     if (name) {
       const categoryName = await Category.findOne({
-        where: {
-          name: {
-            [Op.like]: name,
-          },
+        where: { 
+          name: 
+          { [Op.iLike]: `%${name}%` } 
         },
       });
       return categoryName

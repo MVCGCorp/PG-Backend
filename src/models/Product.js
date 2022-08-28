@@ -23,6 +23,9 @@ module.exports = (sequelize) => {
       },
       price: {
         type: DataTypes.DOUBLE,
+        validate: {
+          isNumeric: true, 
+        }
       }
     },
   );
