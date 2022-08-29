@@ -22,13 +22,6 @@ module.exports = (sequelize) => {
         isEmail: true,
       },
     },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        is: /^[0-9a-f]{64}$/i,
-      },
-    },
     rol: {
       type: DataTypes.ENUM,
       allowNull: false,
