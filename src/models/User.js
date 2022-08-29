@@ -12,7 +12,7 @@ module.exports = (sequelize) => {
             isAlpha: true
         }
       },
-      lasname: {
+      lastname: {
         type: DataTypes.STRING,
         allowNull: false,
       },
