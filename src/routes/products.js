@@ -19,7 +19,8 @@ route.get("/", async (req, res, next) => {
             { longDescription: { [Op.iLike]: `%${name}%` } },
           ],
         },
-        // include: Category,
+        include: Category 
+        
       });
       return product_Name.length
         ? res.status(200).send(product_Name)
@@ -105,7 +106,7 @@ route.delete("/:id", async (req, res, next) => {
         id,
       },
     });
-    return res.json(deletedProduct);
+    return res.json(`${deletedProduct} product has been deleted`);
   } catch (error) {
     console.log(error);
   }
