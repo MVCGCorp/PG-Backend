@@ -25,7 +25,7 @@ route.get("/", async (req, res, next) => {
         ? res.status(200).send(product_Name)
         : res.status(404).send("Product Not Found");
     } else {
-      const product_All = await Product.findAll();
+      const product_All = await Product.findAll({ include: Category });
 
       return product_All.length
         ? res.status(200).send(product_All)
