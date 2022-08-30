@@ -17,7 +17,10 @@ module.exports = (sequelize) => {
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
+      unique: {   //valida que hay un solo usuario con ese Email 
+        args: true,
+        msg: 'Ya existe un usuario con ese email'
+    },
       validate: {
         isEmail: true,
       },
@@ -32,8 +35,15 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        isAlphanumeric: true,
-      },
+        notNull: { 
+          args: true, 
+          msg: 'password can\'t be empty' 
+        },           
+        len: { 
+          args: [5, 50],
+          msg: 'password length must be more than 5 characters' 
+          },
+    }
     },
   });
 };
