@@ -55,7 +55,7 @@ let capsEntries = entries.map((entry) => [
 ]);
 sequelize.models = Object.fromEntries(capsEntries);
 
-const { Product, Category } = sequelize.models;
+const { Product, Category, User } = sequelize.models;
 
 
 // Model1.belongsToMany(Model2, { through: "TabalIntermedia" });
