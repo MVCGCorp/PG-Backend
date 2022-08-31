@@ -55,7 +55,7 @@ let capsEntries = entries.map((entry) => [
 ]);
 sequelize.models = Object.fromEntries(capsEntries);
 
-const { Product, Category } = sequelize.models;
+const { Product, Category, Review } = sequelize.models;
 
 
 // Model1.belongsToMany(Model2, { through: "TabalIntermedia" });
@@ -65,6 +65,9 @@ Product.belongsToMany(Category, {through: "ProductCategory"})
 Category.belongsToMany(Product, {through: "ProductCategory"})
 // Category.hasMany(Product)
 // Product.belongsTo(Category)
+
+Product.hasMany(Review)
+Review.belongsTo(Product)
 
 module.exports = {
   ...sequelize.models,
