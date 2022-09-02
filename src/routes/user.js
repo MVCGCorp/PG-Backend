@@ -63,6 +63,34 @@ try{
      }
 })
 
+route.put('/:id', async (req, res) => {
+const { id } = req.params;
+const {
+  name,
+  lastname,
+  email,
+  rol,
+  password
+} = req.body;
+  if(!email && !name && !lastname && !password && !rol){ 
+      res.status(400)
+      .send('No estas modificando ningun campo')}
+
+      try {
+        const user = await User.update({
+         name, lastname, email, rol, password
+        },
+        {where: {
+          id: id
+        }});
+        res.status(200).send(`${user} has been modify`);
+      } catch (error) {
+        console.log(error)
+        res.send(error);
+      }
+    });
 
 
-module.exports = route
+
+
+module.exports = route;
