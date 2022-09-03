@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
   sequelize.define("user", {
-    name: {
+    given_name: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
@@ -10,9 +10,16 @@ module.exports = (sequelize) => {
         isAlpha: true,
       },
     },
-    lastname: {
+    family_name: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    nickname: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    picture:{
+      type: DataTypes.STRING,
     },
     email: {
       type: DataTypes.STRING,
@@ -25,25 +32,25 @@ module.exports = (sequelize) => {
         isEmail: true,
       },
     },
-    rol: {
-      type: DataTypes.ENUM,
-      allowNull: false,
-      values: ["user", "admin"],
-      defaultValue: "user",
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: { 
-          args: true, 
-          msg: 'password can\'t be empty' 
-        },           
-        len: { 
-          args: [5, 50],
-          msg: 'password length must be more than 5 characters' 
-          },
-    }
-    },
+    // rol: {
+    //   type: DataTypes.ENUM,
+    //   allowNull: true,
+    //   values: ["user", "admin"],
+    //   defaultValue: "user",
+    // },
+    // password: {
+    //   type: DataTypes.STRING,
+    //   allowNull: false,
+    //   validate: {
+    //     notNull: { 
+    //       args: true, 
+    //       msg: 'password can\'t be empty' 
+    //     },           
+    //     len: { 
+    //       args: [5, 50],
+    //       msg: 'password length must be more than 5 characters' 
+    //       },
+    // }
+    // },
   });
 };

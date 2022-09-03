@@ -1,5 +1,6 @@
 const express = require("express");
 
+
 const route = express.Router();
 
 const { Product, Category, User } = require("../db.js");
@@ -36,22 +37,22 @@ const { Router } = require("express");
 
  route.post("/", async (req, res) =>{
    const {
-    name,
-    lastname,
+    given_name,
+    family_name,
     email,
-    password,
-    rol
+    // password,
+    // rol
     } =  req. body
- if (!name || !lastname || !email || !password ) {
+ if (!given_name || !family_name || !email ) {
      return res.status(400).send("Some data is missing");
  }
 try{
     let userSaved = await User.findOrCreate({
-        where: { name: name,
-          lastname: lastname,
+        where: { given_name: given_name,
+          family_name: family_name,
           email: email,
-          password: password,
-          rol: rol || 'user'
+          // password: password,
+          // rol: rol || 'user'
         },
       });
       
@@ -66,19 +67,20 @@ try{
 route.put('/:id', async (req, res) => {
 const { id } = req.params;
 const {
-  name,
-  lastname,
+  given_name,
+  family_name,
   email,
-  rol,
-  password
+  nickname
+  // rol,
+  // password
 } = req.body;
-  if(!email && !name && !lastname && !password && !rol){ 
+  if(!email && !given_name && !family_name ){ 
       res.status(400)
       .send('No estas modificando ningun campo')}
 
       try {
         const user = await User.update({
-         name, lastname, email, rol, password
+          given_name, family_name, email, nickname
         },
         {where: {
           id: id
