@@ -92,7 +92,20 @@ const {
       }
     });
 
-
+    route.delete("/:id", async (req, res, next) => {
+      const { id } =  req.params;
+        try{
+          const userId = await User.destroy({
+            where: {
+              id,
+            },
+          });
+        return res.status(200).send(`${userId} deleted`)
+        } catch (error){
+          console.log(error)
+          return res.send(error)
+        }
+      });  
 
 
 module.exports = route;
