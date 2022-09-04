@@ -7,11 +7,9 @@ const { Sequelize, Op } = require("sequelize");
 
 const AuthController = require("../Controllers/AuthController");
 
+router.get("/", (req, res) => res.send("hello to auth route"));
 
+router.post("/signin", AuthController.signIn);
+router.post("/signup", AuthController.signUp);
 
-router.get('/', (req,res)=> res.json({hello}));
-
-router.post('/signin', AuthController.signIn);
-router.post('/signup', AuthController.signUp);
-
-module.exports = router
+module.exports = router;
