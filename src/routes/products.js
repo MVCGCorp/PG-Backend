@@ -40,7 +40,6 @@ route.get("/", async (req, res, next) => {
           attributes: ["id", "name"],
         }]
     });
-
       return product_All.length
         ? res.status(200).send(product_All)
         : res.status(404).send("No products on DataBase");
