@@ -5,8 +5,8 @@ const bodyParser = require("body-parser");
 const productsRouter = require("./routes/products");
 const categoryRouter = require("./routes/category");
 const userRouter = require("./routes/user");
-const auth = require("./routes/auth")
-const { CORS_URL } = process.env //variable de entorno local => CORS_URL=http://localhost:3000
+const auth = require("./routes/auth");
+const { CORS_URL } = process.env; //variable de entorno local => CORS_URL=http://localhost:3000
 
 require("./db.js");
 
@@ -40,9 +40,10 @@ app.use("/category", categoryRouter);
 app.use("/user", userRouter);
 app.use("/auth", auth);
 
-app.get('/', (req, res) => {
-  res.send('HELLO!! Some usefull information ----->   /products to go to the products route --- /category to go to the category routes')
-})
-
+app.get("/", (req, res) => {
+  res.send(
+    "<div><h1>HELLO!! Some usefull information</h1><br>To go to the products route use --> /products</br><br>To go to the category routes use --> /category</br><br>To register new user go to post on --> /signup</br><br>To log an existing user go to post on --> /signin</br><br>To go to the users route use --> /user</br></div>"
+  );
+});
 
 module.exports = app;
