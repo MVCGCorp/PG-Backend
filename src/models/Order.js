@@ -2,29 +2,11 @@ const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
   sequelize.define("order", {
-    // status: {
-    //   type: DataTypes.ENUM,
-    //   values: [
-    //     "carrito",
-    //     "created",
-    //     "processing",
-    //     "comfirmed",
-    //     "send",
-    //     "canceled",
-    //     "completed",
-    //   ],
-    //   defaultValue: "carrito",
-    //   allowNull: false,
-    // },
-    price: {
-      type: DataTypes.DOUBLE,
-      allowNull: false,
-      validate: {
-        isFloat: true,
-      },
+    status: {
+    type: DataTypes.ENUM ("carrito", "created","processing","comfirmed","canceled","completed"),
+     defaultValue: "carrito",
+     allowNull: false,
     },
-    description: {
-      type: DataTypes.TEXT,
-    }
+ 
   });
 };
