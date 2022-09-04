@@ -42,7 +42,7 @@ app.use("/auth", auth);
 
 app.get("/", (req, res) => {
   res.send(
-    "<div><h1>HELLO!! Some usefull information</h1><br>To go to the products route use --> /products</br><br>To go to the category routes use --> /category</br><br>To register new user go to post on --> /signup</br><br>To log an existing user go to post on --> /signin</br><br>To go to the users route use --> /user</br></div>"
+    "<div><h1>HELLO!! Some usefull information</h1><br>To go to the products route click --><a href='/products'>/products</a></br><br>To go to the category routes click --> <a href='/category'>/category</a></br><br>To register new user go to post on --> /auth/signup</br><br>To log an existing user go to post on --> /auth/signin</br><br>To go to the users route click --> <a href='/user'>/user</a></br></div>"
   );
 });
 
