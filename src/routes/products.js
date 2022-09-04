@@ -19,14 +19,27 @@ route.get("/", async (req, res, next) => {
             { longDescription: { [Op.iLike]: `%${name}%` } },
           ],
         },
-        // include: Category,
+        include: [{
+          model: Category,
+          through: {
+            attributes: [],
+          },
+          attributes: ["id", "name"],
+        }]
       });
       return product_Name.length
         ? res.status(200).send(product_Name)
         : res.status(404).send("Product Not Found");
     } else {
-      const product_All = await Product.findAll({ include: Category });
-
+      const product_All = await Product.findAll({
+        include: [{
+          model: Category,
+          through: {
+            attributes: [],
+          },
+          attributes: ["id", "name"],
+        }]
+    });
       return product_All.length
         ? res.status(200).send(product_All)
         : res.status(404).send("No products on DataBase");
@@ -105,7 +118,7 @@ route.delete("/:id", async (req, res, next) => {
         id,
       },
     });
-    return res.json(deletedProduct);
+    return res.json(`${deletedProduct} product has been deleted`);
   } catch (error) {
     console.log(error);
   }

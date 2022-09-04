@@ -4,6 +4,8 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const productsRouter = require("./routes/products");
 const categoryRouter = require("./routes/category");
+const userRouter = require("./routes/user");
+const auth = require("./routes/auth")
 const { CORS_URL } = process.env //variable de entorno local => CORS_URL=http://localhost:3000
 
 require("./db.js");
@@ -35,6 +37,8 @@ app.use((err, req, res, next) => {
 
 app.use("/products", productsRouter);
 app.use("/category", categoryRouter);
+app.use("/user", userRouter);
+app.use("/auth", auth);
 
 app.get('/', (req, res) => {
   res.send('HELLO!! Some usefull information ----->   /products to go to the products route --- /category to go to the category routes')
