@@ -4,7 +4,6 @@ const route = express.Router();
 
 const { Product, User, Order, OrderDetail } = require("../db.js");
 
-
 route.get("/", (req, res, next) => {
   User.findAll()
     .then((users) => {
@@ -134,9 +133,7 @@ route.post("/:id/cart", (req, res) => {
         return order.setUser(id);
       })
       .then((order) => {
-        
         if (productId) {
-          
           return OrderDetail.create({
             price,
             quantity,
@@ -144,7 +141,7 @@ route.post("/:id/cart", (req, res) => {
             productId: productId,
           });
         }
-        
+
         return order;
       })
       .then((order) => {
@@ -157,7 +154,6 @@ route.post("/:id/cart", (req, res) => {
   } else {
     return res.status(200).json("User missing");
   }
-
 });
 
 //GET --> los productos del carrito de un usuario
@@ -237,6 +233,38 @@ route.delete("/:id/cart", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: error.message });
+  }
+});
+
+//DELETE --> eliminar producto
+
+route.delete("/:id/cart/delete", async (req, res) => {
+  const { id } = req.params;
+  const { productId } = req.body;
+  try {
+    if (!id) return res.status(404).send("You need an ID");
+
+    const product = await Order.findOne({
+      where: {
+        id,
+        status: ["carrito", "created"]
+      },
+      include: {
+        model: OrderDetail,
+        where: {
+          productId,
+        },
+      },
+    });
+
+    if (product) {
+      const deletedProduct = OrderDetail[0].destroy();
+
+      return res.status(200).send(`${deletedProduct} has been deleted`);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error);
   }
 });
 
