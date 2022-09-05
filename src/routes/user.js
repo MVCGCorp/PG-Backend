@@ -2,9 +2,8 @@ const express = require("express");
 
 const route = express.Router();
 
-const { Product, Category, User, Order, OrderDetail } = require("../db.js");
-const { Sequelize, Op } = require("sequelize");
-const { Router } = require("express");
+const { Product, User, Order, OrderDetail } = require("../db.js");
+
 
 route.get("/", (req, res, next) => {
   User.findAll()
@@ -14,7 +13,7 @@ route.get("/", (req, res, next) => {
     .catch(next);
 });
 
-route.get("/:id", async (req, res, next) => {
+route.get("/:id", async (req, res) => {
   const { id } = req.params;
   if (id) {
     try {
@@ -116,13 +115,13 @@ route.delete("/:id", async (req, res, next) => {
 // Pendiente hacer las rutas de orden.
 //Pendiente charlar con la gente de Front si estas siguiendo la misma idea
 
-route.post("/:userId/cart", (req, res) => {
+route.post("/:id/cart", (req, res) => {
   const { productId, price, quantity } = req.body;
-  const { userId } = req.params;
-  console.log('userId', userId)
-  console.log('productId', productId)
-  if (userId) {
-    Order.findOne({ where: { userId: userId, status: "carrito" } })
+  const { id } = req.params;
+  console.log("id", id);
+  console.log("productId", productId);
+  if (id) {
+    Order.findOne({ where: { id: id, status: "carrito" } })
       .then((order) => {
         if (!order) {
           return Order.create({
@@ -132,12 +131,12 @@ route.post("/:userId/cart", (req, res) => {
         return order;
       })
       .then((order) => {
-        return order.setUser(userId);
+        return order.setUser(id);
       })
       .then((order) => {
-        // console.log("productId", productId);
+        
         if (productId) {
-          // console.log('orderIDdddd', order.id)
+          
           return OrderDetail.create({
             price,
             quantity,
@@ -145,7 +144,7 @@ route.post("/:userId/cart", (req, res) => {
             productId: productId,
           });
         }
-        // console.log('order2', order)
+        
         return order;
       })
       .then((order) => {
@@ -156,33 +155,9 @@ route.post("/:userId/cart", (req, res) => {
         return res.status(400).json(err);
       });
   } else {
-    return res.status(200).json("ingresa un usuario");
+    return res.status(200).json("User missing");
   }
 
-  // if(userId){
-  //   try {
-  //     const userOrder = await Order.findOne({where: {userId: userId, status: "carrito" }})
-  //     if(!userOrder){
-  //       const order = await Order.create({
-  //         status:"carrito"
-  //       });
-  //       console.log('order', order)
-  //       order.setUser(userId);
-  //       if(productId){
-  //         const order = await orderList.create({
-  //           price: price,
-  //           quantity: quantity,
-  //           orderId: order.id,
-  //           productId: productId
-  //         })
-  //         return res.send(order)
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.log(error)
-  //     res.send(error)
-  //   }
-  // }
 });
 
 //GET --> los productos del carrito de un usuario
