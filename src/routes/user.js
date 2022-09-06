@@ -157,38 +157,44 @@ route.post("/:id/cart", (req, res) => {
 });
 
 //GET --> los productos del carrito de un usuario
-route.get("/:id/cart", async (req, res) => {
-  const { id } = req.params;
+// route.get('/:id/cart', (req, res, next) => {
+//   Order.findOne({
+//       where: {
+//               userId: req.params.id , 
+//               status: ['cart', 'created']
+              
+//       },
+//       include: OrderDetail
+//   })   
+//   .then((detail) => {
+//     console.log(detail)
+//       res.send(detail.orderDetails)
+//   }).catch((error) => {
+//       res.send(error)
+//   })
+// }) 
 
-  try {
-    const order = await Order.findOne({
-      where: {
-        userId: id,
-        status: "carrito",
-      },
-      include: OrderDetail
-    });
-    if (order) {
-      const cart = order;
-      const order_Details = OrderDetail.findAll({
-        where: {
-          orderId: cart.id,
-        },
-      });
+route.get("/:userId/order/:status", (req, res) => {
+  let { userId, status } = req.params;
 
-      const obj_Cart = {
-        order_Id: cart.id,
-        products: cart.products,
-        order_Details,
-      };
-      return res.status(200).send(obj_Cart);
-    } else {
-      return res.status(400).send([]);
+  Order.findOne({
+    where: {
+      userId: userId,
+      status: status
     }
-  } catch (error) {
-    console.log(error);
-    return res.send(400).send(error);
-  }
+  }).then((order) => {
+    OrderDetail.findAll({
+      where: {
+        orderId: order.id,
+      }
+    })
+      .then(orderdetail => {
+        res.status(200).json(orderdetail)
+      })
+
+  }).catch((err) => {
+    res.status(400).json("Not possible to bring order detail" + err)
+  })
 });
 
 //GET--> las ordenes de un usuario
@@ -207,7 +213,7 @@ route.get("/:id/orders", async (req, res) => {
       ? res.status(200).send(order_All)
       : res
           .status(404)
-          .json({ message: "There ara not orders for given user" });
+          .json({ message: "There are not orders for given user" });
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: error.message });
