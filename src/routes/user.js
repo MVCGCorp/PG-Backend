@@ -166,10 +166,7 @@ route.get("/:id/cart", async (req, res) => {
         userId: id,
         status: "carrito",
       },
-      include: [
-        { model: Product, as: "products" },
-        { model: User, as: "user" },
-      ],
+      include: OrderDetail
     });
     if (order) {
       const cart = order;
@@ -203,6 +200,7 @@ route.get("/:id/orders", async (req, res) => {
       where: {
         userId: id,
       },
+      include: OrderDetail
     });
     console.log(order_All);
     return order_All.length
@@ -244,24 +242,13 @@ route.delete("/:id/cart/delete", async (req, res) => {
   try {
     if (!id) return res.status(404).send("You need an ID");
 
-    const product = await Order.findOne({
+    const deletedProduct = await OrderDetail.destroy({
       where: {
-        id,
-        status: ["carrito", "created"]
-      },
-      include: {
-        model: OrderDetail,
-        where: {
           productId,
         },
-      },
-    });
+      });
+ return res.status(200).send(`${deletedProduct} has been deleted`);
 
-    if (product) {
-      const deletedProduct = OrderDetail[0].destroy();
-
-      return res.status(200).send(`${deletedProduct} has been deleted`);
-    }
   } catch (error) {
     console.log(error);
     res.status(400).send(error);
