@@ -157,29 +157,12 @@ route.post("/:id/cart", (req, res) => {
 });
 
 //GET --> los productos del carrito de un usuario
-// route.get('/:id/cart', (req, res, next) => {
-//   Order.findOne({
-//       where: {
-//               userId: req.params.id , 
-//               status: ['cart', 'created']
-              
-//       },
-//       include: OrderDetail
-//   })   
-//   .then((detail) => {
-//     console.log(detail)
-//       res.send(detail.orderDetails)
-//   }).catch((error) => {
-//       res.send(error)
-//   })
-// }) 
-
-route.get("/:userId/order/:status", (req, res) => {
-  let { userId, status } = req.params;
+route.get("/:id/order/:status", (req, res) => {
+  let { id, status } = req.params;
 
   Order.findOne({
     where: {
-      userId: userId,
+      id: id,
       status: status
     }
   }).then((order) => {
