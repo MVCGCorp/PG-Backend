@@ -55,7 +55,7 @@ let capsEntries = entries.map((entry) => [
 ]);
 sequelize.models = Object.fromEntries(capsEntries);
 
-const { Product, Category, User, Order, OrderDetail } = sequelize.models;
+const { Product, Category, User, Order, OrderDetail, Review } = sequelize.models;
 
 // console.log('order', OrderDetail)
 
@@ -71,7 +71,8 @@ Order.belongsTo(User) // no necesita segunda parametro
 Order.hasMany(OrderDetail) //crea "OrderId" en OrderDetail
 Product.hasMany(OrderDetail) //crea "ProductId" en OrderDetail
 
-
+Product.hasMany(Review)
+Review.belongsTo(Product)
 
 // Order.belongsToMany(Product, { through: OrderDetail});
 // Product.belongsToMany(Order, { through: OrderDetail});
