@@ -2,7 +2,7 @@ const express = require("express");
 
 const route = express.Router();
 
-const { Product, Category } = require("../db.js");
+const { Product, Category, Review } = require("../db.js");
 const { Sequelize, Op } = require("sequelize");
 
 //GET:todos los productos
@@ -19,27 +19,31 @@ route.get("/", async (req, res, next) => {
             { longDescription: { [Op.iLike]: `%${name}%` } },
           ],
         },
-        include: [{
-          model: Category,
-          through: {
-            attributes: [],
+        include: [
+          {
+            model: Category,
+            through: {
+              attributes: [],
+            },
+            attributes: ["id", "name"],
           },
-          attributes: ["id", "name"],
-        }]
+        ],
       });
       return product_Name.length
         ? res.status(200).send(product_Name)
         : res.status(404).send("Product Not Found");
     } else {
       const product_All = await Product.findAll({
-        include: [{
-          model: Category,
-          through: {
-            attributes: [],
+        include: [
+          {
+            model: Category,
+            through: {
+              attributes: [],
+            },
+            attributes: ["id", "name"],
           },
-          attributes: ["id", "name"],
-        }]
-    });
+        ],
+      });
       return product_All.length
         ? res.status(200).send(product_All)
         : res.status(404).send("No products on DataBase");
@@ -55,7 +59,19 @@ route.get("/:id", async (req, res, next) => {
   const { id } = req.params;
   if (id) {
     try {
-      const product_Id = await Product.findByPk(id, { include: Category });
+      const product_Id = await Product.findByPk(id, {
+        include: [
+          {
+            model: Category,
+            through: { attributes: [] },
+            attributes: ["id", "name"],
+          },
+          {
+            model: Review,
+            attributes: ["id", "description", "ranking", "createdAt"],
+          },
+        ],
+      });
       return product_Id
         ? res.status(200).json(product_Id)
         : res.status(404).send("Product Not Found");
@@ -95,7 +111,7 @@ route.post("/", async (req, res, next) => {
     });
     const match = await Category.findAll({
       where: {
-        name: category
+        name: category,
       },
     });
     await productSaved.addCategory(match);
@@ -134,16 +150,15 @@ route.put("/:id", async (req, res) => {
     image,
     statusId,
     shortDescription,
-    category
+    category,
   } = req.body;
-  console.log(price)
+  console.log(price);
 
   // if (!id){ return res.status(404).send("Product id is required")}
 
   try {
-
-    if(category){
-      const product = await Product.findByPk(id)
+    if (category) {
+      const product = await Product.findByPk(id);
       // console.log('product', product.toJSON())
       const match = await Category.findAll({
         where: {
@@ -151,27 +166,31 @@ route.put("/:id", async (req, res) => {
         },
       });
       // console.log('match', match.toJSON())
-      if(match){ 
-      await product.addCategory(match);
+      if (match) {
+        await product.addCategory(match);
       }
     }
 
-    const product_Id = await Product.update({
-      name,
-      longDescription,
-      price,
-      stock,
-      image,
-      statusId,
-      shortDescription,
-      category
-    },
-    {where: {
-      id: id
-    }});
+    const product_Id = await Product.update(
+      {
+        name,
+        longDescription,
+        price,
+        stock,
+        image,
+        statusId,
+        shortDescription,
+        category,
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
     res.status(200).send(`${product_Id} product has been modify`);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.send(error);
   }
 });
