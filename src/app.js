@@ -6,6 +6,7 @@ const productsRouter = require("./routes/products");
 const categoryRouter = require("./routes/category");
 const userRouter = require("./routes/user");
 const orderRouter = require("./routes/order")
+const reviewRouter = require("./routes/review")
 const auth = require("./routes/auth")
 const { CORS_URL } = process.env //variable de entorno local => CORS_URL=http://localhost:3000
 
@@ -39,6 +40,7 @@ app.use((err, req, res, next) => {
 app.use("/products", productsRouter);
 app.use("/category", categoryRouter);
 app.use("/user", userRouter);
+app.use("/review", reviewRouter);
 app.use("/auth", auth);
 app.use("/order", orderRouter);
 
