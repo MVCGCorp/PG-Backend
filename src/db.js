@@ -67,15 +67,16 @@ Category.belongsToMany(Product, {through: "ProductCategory"})
 
 
 User.hasMany(Order) //crea "UserId" en Order
-Order.belongsTo(User) // no necesita segunda parametro
-Order.hasMany(OrderDetail) //crea "OrderId" en OrderDetail
-Product.hasMany(OrderDetail) //crea "ProductId" en OrderDetail
+Order.belongsTo(User) //, {through: "OrderUser"}
+// Order.belongsTo(User) // no necesita segunda parametro
+// Order.hasMany(OrderDetail) //crea "OrderId" en OrderDetail
+// Product.hasMany(OrderDetail) //crea "ProductId" en OrderDetail
 
 
 
-// Order.belongsToMany(Product, { through: OrderDetail});
-// Product.belongsToMany(Order, { through: OrderDetail});
-// Order.belongsTo(User, {through: "OrderUser"})
+Order.belongsToMany(Product, { through: OrderDetail});
+Product.belongsToMany(Order, { through: OrderDetail});
+
 
 module.exports = {
   ...sequelize.models,
