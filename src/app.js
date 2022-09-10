@@ -6,6 +6,7 @@ const productsRouter = require("./routes/products");
 const categoryRouter = require("./routes/category");
 const userRouter = require("./routes/user");
 const orderRouter = require("./routes/order")
+const paymentRouter = require("./routes/payment")
 const reviewRouter = require("./routes/review")
 const auth = require("./routes/auth")
 const { CORS_URL } = process.env //variable de entorno local => CORS_URL=http://localhost:3000
@@ -13,6 +14,9 @@ const { CORS_URL } = process.env //variable de entorno local => CORS_URL=http://
 require("./db.js");
 
 const app = express();
+
+app.use(express.json());
+app.use(express.static("public"));
 
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 app.use(bodyParser.json({ limit: "50mb" }));
@@ -43,6 +47,7 @@ app.use("/user", userRouter);
 app.use("/review", reviewRouter);
 app.use("/auth", auth);
 app.use("/order", orderRouter);
+app.use("/", paymentRouter);
 
 app.get('/', (req, res) => {
   res.send('HELLO!! Some usefull information ----->   /products to go to the products route --- /category to go to the category routes')

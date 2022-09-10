@@ -2,7 +2,7 @@ const express = require("express");
 const route = express.Router();
 const { Product, Review } = require("../db.js");
 const { Sequelize, Op, where } = require("sequelize");
-const { query } = require("express");
+// const { query } = require("express");
 
 route.get("/", async (req, res, next) => {
   try {
