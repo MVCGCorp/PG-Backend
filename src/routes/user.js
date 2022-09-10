@@ -114,13 +114,13 @@ route.delete("/:id", async (req, res, next) => {
 // Pendiente hacer las rutas de orden.
 //Pendiente charlar con la gente de Front si estas siguiendo la misma idea
 
+//Ruta POST para agregar productos al carrito
+
 route.post("/:id/cart", (req, res) => {
   const { productId, price, quantity } = req.body;
   const { id } = req.params;
-  console.log("id", id);
-  console.log("productId", productId);
   if (id) {
-    Order.findOne({ where: { id: id, status: "carrito" } })
+    Order.findOne({ where: { userId: id, status: "carrito" } })
       .then((order) => {
         if (!order) {
           return Order.create({
@@ -145,7 +145,6 @@ route.post("/:id/cart", (req, res) => {
         return order;
       })
       .then((order) => {
-        console.log("orderrrrr", order);
         return res.status(200).send(order);
       })
       .catch((err) => {
@@ -156,31 +155,32 @@ route.post("/:id/cart", (req, res) => {
   }
 });
 
-//GET --> los productos del carrito de un usuario
+//Ruta GET para traer los productos del carrito de un usuario
+
 route.get("/:id/order/:status", (req, res) => {
   let { id, status } = req.params;
 
   Order.findOne({
     where: {
       id: id,
-      status: status
-    }
-  }).then((order) => {
-    OrderDetail.findAll({
-      where: {
-        orderId: order.id,
-      }
-    })
-      .then(orderdetail => {
-        res.status(200).json(orderdetail)
-      })
-
-  }).catch((err) => {
-    res.status(400).json("Not possible to bring order detail" + err)
+      status: status,
+    },
   })
+    .then((order) => {
+      OrderDetail.findAll({
+        where: {
+          orderId: order.id,
+        },
+      }).then((orderdetail) => {
+        res.status(200).json(orderdetail);
+      });
+    })
+    .catch((err) => {
+      res.status(400).json("Order not found" + err);
+    });
 });
 
-//GET--> las ordenes de un usuario
+//Ruta GET para traer las ordenes de un usuario
 route.get("/:id/orders", async (req, res) => {
   const { id } = req.params;
 
@@ -189,21 +189,19 @@ route.get("/:id/orders", async (req, res) => {
       where: {
         userId: id,
       },
-      include: OrderDetail
     });
     console.log(order_All);
     return order_All.length
       ? res.status(200).send(order_All)
-      : res
-          .status(404)
-          .json({ message: "There are not orders for given user" });
+      : res.status(404).json({ message: "User has not active orders" });
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: error.message });
   }
 });
 
-//DELETE --> vaciar el carrito
+//Ruta DELETE para eliminar o "vaciar" el carrito
+
 route.delete("/:id/cart", async (req, res) => {
   const { id } = req.params;
   try {
@@ -223,7 +221,7 @@ route.delete("/:id/cart", async (req, res) => {
   }
 });
 
-//DELETE --> eliminar producto
+//Ruta DELETE para eliminar un producto
 
 route.delete("/:id/cart/delete", async (req, res) => {
   const { id } = req.params;
@@ -233,14 +231,41 @@ route.delete("/:id/cart/delete", async (req, res) => {
 
     const deletedProduct = await OrderDetail.destroy({
       where: {
-          productId,
-        },
-      });
- return res.status(200).send(`${deletedProduct} has been deleted`);
-
+        productId,
+      },
+    });
+    return res.status(200).send(`${deletedProduct} has been deleted`);
   } catch (error) {
     console.log(error);
     res.status(400).send(error);
+  }
+});
+
+//Ruta PUT para modificar la cantidad de un item del carrito
+
+route.put("/:id/cart", async (req, res) => {
+  const userId = req.params;
+  const { productId, quantity, orderId } = req.body;
+
+  try {
+    const quantityUpdate = await OrderDetail.update(
+      {
+        quantity: quantity,
+      },
+      {
+        where: {
+          orderId: orderId,
+          productId: productId,
+        },
+      }
+    );
+    // console.log(quantityUpdate);
+    if (quantityUpdate)
+      return res.send(`${quantityUpdate} product quantity has been updated`);
+
+    return res.status(400).json({ msg: "Update cannot de done" });
+  } catch (error) {
+    res.status(404).send(error);
   }
 });
 
