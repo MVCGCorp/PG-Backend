@@ -33,9 +33,9 @@ route.post("/", async (req, res) => {
     family_name,
     email,
     // password,
-    // rol
+    rol
   } = req.body;
-  if (!given_name || !family_name || !email) {
+  if (!given_name || !family_name || !email || !rol) {
     return res.status(400).send("Some data is missing");
   }
   try {
@@ -45,7 +45,7 @@ route.post("/", async (req, res) => {
         family_name: family_name,
         email: email,
         // password: password,
-        // rol: rol || 'user'
+        rol: rol || 'user'
       },
     });
 
@@ -63,10 +63,10 @@ route.put("/:id", async (req, res) => {
     family_name,
     email,
     nickname,
-    // rol,
+    rol,
     // password
   } = req.body;
-  if (!email && !given_name && !family_name) {
+  if (!email && !given_name && !family_name && !rol) {
     res.status(400).send("No estas modificando ningun campo");
   }
 
@@ -77,6 +77,7 @@ route.put("/:id", async (req, res) => {
         family_name,
         email,
         nickname,
+        rol
       },
       {
         where: {
@@ -117,7 +118,9 @@ route.delete("/:id", async (req, res, next) => {
 //Ruta POST para agregar productos al carrito
 
 route.post("/:id/cart", (req, res) => {
-  const { productId, price, quantity } = req.body;
+  const productId = req.body.id;
+  const price = req.body.price;
+  const quantity = req.body.quantity;
   const { id } = req.params;
   if (id) {
     Order.findOne({ where: { userId: id, status: "carrito" } })
@@ -224,10 +227,10 @@ route.delete("/:id/cart", async (req, res) => {
 //Ruta DELETE para eliminar un producto
 
 route.delete("/:id/cart/delete", async (req, res) => {
-  const { id } = req.params;
-  const { productId } = req.body;
+  const userId = req.params.id;
+  const productId = req.query.id;
   try {
-    if (!id) return res.status(404).send("You need an ID");
+    if (!userId) return res.status(404).send("You need an ID");
 
     const deletedProduct = await OrderDetail.destroy({
       where: {
