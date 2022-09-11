@@ -1,7 +1,6 @@
 const express = require("express");
 
 const route = express.Router();
-
 const { Product, User, Order, OrderDetail } = require("../db.js");
 
 route.get("/", (req, res, next) => {
@@ -33,6 +32,7 @@ route.post("/", async (req, res) => {
     family_name,
     email,
     // password,
+
     rol
   } = req.body;
   if (!given_name || !family_name || !email || !rol) {
@@ -45,6 +45,7 @@ route.post("/", async (req, res) => {
         family_name: family_name,
         email: email,
         // password: password,
+
         rol: rol || 'user'
       },
     });
@@ -67,6 +68,7 @@ route.put("/:id", async (req, res) => {
     // password
   } = req.body;
   if (!email && !given_name && !family_name && !rol) {
+
     res.status(400).send("No estas modificando ningun campo");
   }
 
