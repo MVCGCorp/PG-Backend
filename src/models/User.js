@@ -32,12 +32,12 @@ module.exports = (sequelize) => {
         isEmail: true,
       },
     },
-    // rol: {
-    //   type: DataTypes.ENUM,
-    //   allowNull: true,
-    //   values: ["user", "admin"],
-    //   defaultValue: "user",
-    // },
+    rol: {
+      type: DataTypes.ENUM,
+      allowNull: true,
+      values: ["user", "admin", "mododios"],
+      defaultValue: "user",
+    }
     // password: {
     //   type: DataTypes.STRING,
     //   allowNull: false,
