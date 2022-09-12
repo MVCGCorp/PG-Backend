@@ -3,6 +3,8 @@ const express = require("express");
 const route = express.Router();
 const { Product, User, Order, OrderDetail } = require("../db.js");
 
+const isAdmin = require('../Middlewares/isAdmin.js')
+
 route.get("/", (req, res, next) => {
   User.findAll()
     .then((users) => {
@@ -60,10 +62,8 @@ route.put("/:id", async (req, res) => {
     family_name,
     email,
     nickname,
-    rol,
-    // password
   } = req.body;
-  if (!email && !given_name && !family_name && !rol) {
+  if (!email && !given_name && !family_name) {
 
     res.status(400).send("No estas modificando ningun campo");
   }
@@ -75,7 +75,6 @@ route.put("/:id", async (req, res) => {
         family_name,
         email,
         nickname,
-        rol
       },
       {
         where: {
@@ -89,6 +88,7 @@ route.put("/:id", async (req, res) => {
     res.send(error);
   }
 });
+
 
 route.delete("/:id", async (req, res, next) => {
   const { id } = req.params;
@@ -104,6 +104,40 @@ route.delete("/:id", async (req, res, next) => {
     return res.send(error);
   }
 });
+
+/*
+MODIFICA ROL DEL USUARIO
+*/
+
+// PUT SOLO A ROL
+route.put("/:id/rol", isAdmin, async (req, res) => {
+  const { id } = req.params;
+  const {
+    rol
+  } = req.body;
+  if (!rol) {
+
+    res.status(400).send("No estas modificando el rol");
+  }
+
+  try {
+    const user = await User.update(
+      {
+        rol
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+    res.status(200).send(`${user} has been modify`);
+  } catch (error) {
+    console.log(error);
+    res.send(error);
+  }
+});
+
 
 //Rutas carrito.
 
