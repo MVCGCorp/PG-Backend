@@ -5,6 +5,8 @@ const route = express.Router();
 const { Product, Category, Review } = require("../db.js");
 const { Sequelize, Op } = require("sequelize");
 
+const isAdmin = require('../Middlewares/isAdmin.js')
+
 //GET:todos los productos
 route.get("/", async (req, res, next) => {
   let { name } = req.query;
@@ -83,7 +85,7 @@ route.get("/:id", async (req, res, next) => {
 });
 
 //POST: crear nuevo producto. faltaria validar que solo pueda hacerlo un admin
-route.post("/", async (req, res, next) => {
+route.post("/", isAdmin, async (req, res, next) => {
   const {
     name,
     longDescription,
@@ -124,9 +126,9 @@ route.post("/", async (req, res, next) => {
   }
 });
 
-// DELETE: eliminar producto, falta validacion para que solo lo pueda hacer el admin
+// DELETE: eliminar producto
 
-route.delete("/:id", async (req, res, next) => {
+route.delete("/:id", isAdmin, async (req, res, next) => {
   const { id } = req.params;
   try {
     const deletedProduct = await Product.destroy({
@@ -140,7 +142,7 @@ route.delete("/:id", async (req, res, next) => {
   }
 });
 
-route.put("/:id", async (req, res) => {
+route.put("/:id", isAdmin, async (req, res) => {
   const { id } = req.params;
   const {
     name,
