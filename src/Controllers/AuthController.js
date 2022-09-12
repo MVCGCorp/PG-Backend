@@ -8,7 +8,7 @@ const userRouter = require("../routes/user")
 module.exports = {
     signIn (req, res){
 
-        let {email} = req.body
+        const {email} = req.body
         User.findOne({
             where: {
                 email:email
@@ -17,7 +17,7 @@ module.exports = {
             if(!user) {
                 res.status(404).json({msg:"User not found"})
             }else {
-                let token = jwt.sign({user: user}, authConfig.secret, { 
+                const token = jwt.sign({user: user}, authConfig.secret, { 
                     expiresIn: authConfig.expires,
                 });
                 res.json({

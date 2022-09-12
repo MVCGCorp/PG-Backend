@@ -31,8 +31,6 @@ route.post("/", async (req, res) => {
     given_name,
     family_name,
     email,
-    // password,
-
     rol
   } = req.body;
   if (!given_name || !family_name || !email) {
@@ -44,8 +42,6 @@ route.post("/", async (req, res) => {
         given_name: given_name,
         family_name: family_name,
         email: email,
-        // password: password,
-
         rol: rol || 'user'
       },
     });
