@@ -31,11 +31,9 @@ route.post("/", async (req, res) => {
     given_name,
     family_name,
     email,
-    // password,
-
     rol
   } = req.body;
-  if (!given_name || !family_name || !email || !rol) {
+  if (!given_name || !family_name || !email) {
     return res.status(400).send("Some data is missing");
   }
   try {
@@ -44,8 +42,6 @@ route.post("/", async (req, res) => {
         given_name: given_name,
         family_name: family_name,
         email: email,
-        // password: password,
-
         rol: rol || 'user'
       },
     });
