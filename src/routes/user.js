@@ -3,7 +3,7 @@ const express = require("express");
 const route = express.Router();
 const { Product, User, Order, OrderDetail } = require("../db.js");
 
-const isAdmin = require('../Middlewares/isAdmin.js')
+const isAdminGod = require('../Middlewares/isAdminGod.js')
 
 route.get("/", (req, res, next) => {
   User.findAll()
@@ -110,7 +110,7 @@ MODIFICA ROL DEL USUARIO
 */
 
 // PUT SOLO A ROL
-route.put("/:id/rol", isAdmin, async (req, res) => {
+route.put("/:id/rol", isAdminGod, async (req, res) => {
   const { id } = req.params;
   const {
     rol
