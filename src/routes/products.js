@@ -116,7 +116,7 @@ route.post("/", isAdmin, async (req, res, next) => {
         name: category,
       },
     });
-    await productSaved.setCategory(match);
+    await productSaved.addCategory(match);
     return !created
       ? res.status(404).send(`${name} already exist`)
       : res.status(200).json(productSaved);
@@ -169,7 +169,7 @@ route.put("/:id", isAdmin, async (req, res) => {
       });
       // console.log('match', match.toJSON())
       if (match) {
-        await product.addCategory(match);
+        await product.setCategory(match);
       }
     }
 
