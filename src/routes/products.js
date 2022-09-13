@@ -116,7 +116,7 @@ route.post("/", isAdmin, async (req, res, next) => {
         name: category,
       },
     });
-    await productSaved.addCategory(match);
+    await productSaved.setCategory(match);
     return !created
       ? res.status(404).send(`${name} already exist`)
       : res.status(200).json(productSaved);
