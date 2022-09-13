@@ -5,12 +5,16 @@ const { Product, User, Order, OrderDetail } = require("../db.js");
 
 const isAdminGod = require("../Middlewares/isAdminGod.js");
 
-route.get("/", (req, res, next) => {
-  User.findAll()
-    .then((users) => {
-      res.send(users);
-    })
-    .catch(next);
+route.get("/", async (req, res, next) => {
+  try {
+    const users= await User.findAll();
+    return users
+    ? res.status(200).send(users)
+    : res.status(404).send("No users on DB")
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({msg: error})
+  }
 });
 
 route.get("/:id", async (req, res) => {
