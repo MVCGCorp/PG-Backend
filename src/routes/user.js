@@ -3,6 +3,8 @@ const express = require("express");
 const route = express.Router();
 const { Product, User, Order, OrderDetail } = require("../db.js");
 
+const isAdminGod = require("../Middlewares/isAdminGod.js");
+
 route.get("/", (req, res, next) => {
   User.findAll()
     .then((users) => {
@@ -27,15 +29,8 @@ route.get("/:id", async (req, res) => {
 });
 
 route.post("/", async (req, res) => {
-  const {
-    given_name,
-    family_name,
-    email,
-    // password,
-
-    rol
-  } = req.body;
-  if (!given_name || !family_name || !email || !rol) {
+  const { given_name, family_name, email, rol } = req.body;
+  if (!given_name || !family_name || !email) {
     return res.status(400).send("Some data is missing");
   }
   try {
@@ -44,9 +39,7 @@ route.post("/", async (req, res) => {
         given_name: given_name,
         family_name: family_name,
         email: email,
-        // password: password,
-
-        rol: rol || 'user'
+        rol: rol || "user",
       },
     });
 
@@ -59,16 +52,8 @@ route.post("/", async (req, res) => {
 
 route.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const {
-    given_name,
-    family_name,
-    email,
-    nickname,
-    rol,
-    // password
-  } = req.body;
-  if (!email && !given_name && !family_name && !rol) {
-
+  const { given_name, family_name, email, nickname } = req.body;
+  if (!email && !given_name && !family_name) {
     res.status(400).send("No estas modificando ningun campo");
   }
 
@@ -79,7 +64,6 @@ route.put("/:id", async (req, res) => {
         family_name,
         email,
         nickname,
-        rol
       },
       {
         where: {
@@ -94,18 +78,51 @@ route.put("/:id", async (req, res) => {
   }
 });
 
-route.delete("/:id", async (req, res, next) => {
+// route.delete("/:id", async (req, res, next) => {
+//   const { id } = req.params;
+//   try {
+//     const userId = await User.destroy({
+//       where: {
+//         id,
+//       },
+//     });
+//     return res.status(200).send(`${userId} deleted`);
+//   } catch (error) {
+//     console.log(error);
+//     return res.send(error);
+//   }
+// });
+
+/*
+MODIFICA ROL DEL USUARIO
+*/
+
+// PUT SOLO A ROL
+route.put("/:id/modificar", isAdminGod, async (req, res) => {
   const { id } = req.params;
+  const { rol, isDisable } = req.body;
+  if (!rol || !isDisable) {
+    res
+      .status(400)
+      .send("Faltan datos");
+  }
+
   try {
-    const userId = await User.destroy({
-      where: {
-        id,
+    const user = await User.update(
+      {
+        rol, 
+        isDisable
       },
-    });
-    return res.status(200).send(`${userId} deleted`);
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+    res.status(200).send(`${user} has been modify`);
   } catch (error) {
     console.log(error);
-    return res.send(error);
+    res.send(error);
   }
 });
 

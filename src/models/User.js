@@ -5,10 +5,10 @@ module.exports = (sequelize) => {
     given_name: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        is: /^[a-z]+$/i,
-        isAlpha: true,
-      },
+      // validate: {
+      //   is: /^[a-z]+$/i,
+      //   isAlpha: true,
+      // },
     },
     family_name: {
       type: DataTypes.STRING,
@@ -37,7 +37,13 @@ module.exports = (sequelize) => {
       allowNull: true,
       values: ["user", "admin", "mododios"],
       defaultValue: "user",
-    }
+    },
+   isDisable:{
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    allowNull: false
+}
+    
     // password: {
     //   type: DataTypes.STRING,
     //   allowNull: false,
