@@ -37,7 +37,13 @@ module.exports = (sequelize) => {
       allowNull: true,
       values: ["user", "admin", "mododios"],
       defaultValue: "user",
-    }
+    },
+   isDisable:{
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    allowNull: false
+}
+    
     // password: {
     //   type: DataTypes.STRING,
     //   allowNull: false,
