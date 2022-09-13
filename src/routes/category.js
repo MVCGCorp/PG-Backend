@@ -5,20 +5,21 @@ const route = express.Router();
 const { Product, Category } = require("../db.js");
 const { Sequelize, Op } = require("sequelize");
 
+
 const isAdmin = require('../Middlewares/isAdmin.js')
 
 // GET por nombre y todas. 
 
+
 route.get("/", async (req, res) => {
   let { name } = req.query;
   name ? (name = name.toLowerCase()) : null;
-  
+
   try {
     if (name) {
       const categoryName = await Category.findOne({
-        where: { 
-          name: 
-          { [Op.iLike]: `%${name}%` } 
+        where: {
+          name: { [Op.iLike]: `%${name}%` },
         },
       });
       return categoryName
@@ -28,20 +29,36 @@ route.get("/", async (req, res) => {
       const allCategories = await Category.findAll();
 
       return allCategories.length
-      ? res.status(200).send(allCategories)
-      : res.status(404).send("No Categories on DataBase");
+        ? res.status(200).send(allCategories)
+        : res.status(404).send("No Categories on DataBase");
     }
   } catch (error) {
     console.log(error);
     res.status(400).send(error);
   }
 });
-  
+
+route.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  if (id) {
+    try {
+      const category = await Category.findByPk(id);
+      return category
+        ? res.status(200).json(category)
+        : res.status(404).send("Category Not Found");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+});
+
 //POST: agregar una categoría.  faltaria validar que solo pueda hacerlo un admin
+
 route.post("/", isAdmin, async (req, res) => {
   const {
     name,
   } = req.body;
+
   if (!name) {
     return res.status(400).send("Some data is missing");
   }
@@ -60,35 +77,38 @@ route.post("/", isAdmin, async (req, res) => {
 
 route.delete("/:id", isAdmin, async (req, res) => {
   const { id } = req.params
+
   try {
-      const deletedCategory = await Category.destroy({
-          where:{
-              id
-          }
-      });
-      return res.json(deletedCategory)
-  } catch(error){
-      console.log(error)
-  }      
+    const deletedCategory = await Category.destroy({
+      where: {
+        id,
+      },
+    });
+    return res.json(deletedCategory);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 route.put("/:id", isAdmin, async (req, res) => {
   const { id } = req.params;
-  const {
-    name
-  } = req.body;
+  const { name } = req.body;
 
   try {
-    const category_Id = await Category.update({
-      name
-    },
-    {where: {
-      id: id
-    }});
+    const category_Id = await Category.update(
+      {
+        name,
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
     res.status(200).send(`${category_Id} category has been modify`);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.send(error);
   }
 });
-module.exports = route
+module.exports = route;
