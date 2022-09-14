@@ -6,7 +6,18 @@ const { Product, User, Order, OrderDetail } = require("../db.js");
 const isAdminGod = require("../Middlewares/isAdminGod.js");
 
 route.get("/", async (req, res, next) => {
+  const { email } = req.query
   try {
+    if(email){
+      const userEmail = User.findOne({
+        where:{
+          email: email
+        }
+      });
+      return email
+      ? res.status(200).send(userEmail)
+      : res.status(404).send("user not found")
+    }
     const users= await User.findAll();
     return users
     ? res.status(200).send(users)
@@ -33,16 +44,17 @@ route.get("/:id", async (req, res) => {
 });
 
 route.post("/", async (req, res) => {
-  const { given_name, family_name, email, rol } = req.body;
-  if (!given_name || !family_name || !email) {
+  const { given_name, family_name, email, rol, nickname } = req.body;
+  if (!email) {
     return res.status(400).send("Some data is missing");
   }
   try {
     let userSaved = await User.findOrCreate({
       where: {
-        given_name: given_name,
-        family_name: family_name,
+        given_name: given_name || "incompleted",
+        family_name: family_name || "incompleted",
         email: email,
+        nickname: nickname || "incompleted",
         rol: rol || "user",
       },
     });
