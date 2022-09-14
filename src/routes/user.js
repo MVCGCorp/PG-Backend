@@ -114,10 +114,11 @@ MODIFICA ROL DEL USUARIO
 */
 
 // PUT SOLO A ROL
-route.put("/:id/modificar", isAdminGod, async (req, res) => {
+//  isAdminGod,
+route.put("/:id/modificar", async (req, res) => {
   const { id } = req.params;
   const { rol, isDisable } = req.body;
-  if (!rol || !isDisable) {
+  if (!rol && !isDisable) {
     res
       .status(400)
       .send("Faltan datos");
