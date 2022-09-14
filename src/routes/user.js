@@ -14,7 +14,7 @@ route.get("/", async (req, res, next) => {
           email: email
         }
       });
-      return email
+      return userEmail
       ? res.status(200).send(userEmail)
       : res.status(404).send("user not found")
     }
