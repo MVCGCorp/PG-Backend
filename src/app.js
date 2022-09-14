@@ -47,7 +47,7 @@ app.use("/user", userRouter);
 app.use("/review", reviewRouter);
 app.use("/auth", auth);
 app.use("/order", orderRouter);
-app.use("/", paymentRouter);
+app.use("/payment", paymentRouter);
 
 app.get("/", (req, res) => {
   res.send(

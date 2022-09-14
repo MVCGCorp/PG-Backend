@@ -10,7 +10,7 @@ route.get("/", async (req, res, next) => {
     res.status(200).json(reviews);
   } catch (error) {
     console.log(error);
-    res.status(404).send(error);
+    res.status(404).send("Review Not Found");
   }
 });
 

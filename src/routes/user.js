@@ -6,7 +6,18 @@ const { Product, User, Order, OrderDetail } = require("../db.js");
 const isAdminGod = require("../Middlewares/isAdminGod.js");
 
 route.get("/", async (req, res, next) => {
+  const { email } = req.query
   try {
+    if(email){
+      const userEmail = User.findOne({
+        where:{
+          email: email
+        }
+      });
+      return userEmail
+      ? res.status(200).send(userEmail)
+      : res.status(404).send("user not found")
+    }
     const users= await User.findAll();
     return users
     ? res.status(200).send(users)
