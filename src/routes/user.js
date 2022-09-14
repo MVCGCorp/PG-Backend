@@ -9,7 +9,7 @@ route.get("/", async (req, res, next) => {
   const { email } = req.query
   try {
     if(email){
-      const userEmail = User.findOne({
+      const userEmail = await User.findOne({
         where:{
           email: email
         }
