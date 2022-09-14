@@ -33,16 +33,17 @@ route.get("/:id", async (req, res) => {
 });
 
 route.post("/", async (req, res) => {
-  const { given_name, family_name, email, rol } = req.body;
-  if (!given_name || !family_name || !email) {
+  const { given_name, family_name, email, rol, nickname } = req.body;
+  if (!email) {
     return res.status(400).send("Some data is missing");
   }
   try {
     let userSaved = await User.findOrCreate({
       where: {
-        given_name: given_name,
-        family_name: family_name,
+        given_name: given_name || "incompleted",
+        family_name: family_name || "incompleted",
         email: email,
+        nickname: nickname || "incompleted",
         rol: rol || "user",
       },
     });
