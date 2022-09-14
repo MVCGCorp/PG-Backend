@@ -33,9 +33,9 @@ module.exports = (sequelize) => {
       },
     },
     rol: {
-      type: DataTypes.ENUM,
+      type: DataTypes.STRING,
       allowNull: true,
-      values: ["user", "admin", "mododios"],
+      // values: ["user", "admin", "mododios"],
       defaultValue: "user",
     },
    isDisable:{
