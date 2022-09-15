@@ -154,8 +154,8 @@ route.put("/:id/modificar", async (req, res) => {
 //Ruta POST para agregar productos al carrito
 
 route.post("/:id/cart", (req, res) => {
-  const productId = req.body.id;
-  const price = req.body.price;
+  const productId = req.body.prodDetail.id;
+  const price = req.body.prodDetail.price;
   const quantity = req.body.quantity;
   const { id } = req.params;
   if (id) {
