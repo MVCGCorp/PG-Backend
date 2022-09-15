@@ -15,24 +15,29 @@ route.get("/", async (req, res, next) => {
 });
 
 route.post("/", async (req, res, next) => {
-  const { productId, description, ranking } = req.body;
+  const { productId, description, ranking, userId } = req.body;
   if (!productId || !description || !ranking) {
     return res.status(400).send("Some data is missing");
   }
 
   try {
-    let product = await Product.findByPk(productId);
-
-    if (product) {
+    let productUser = await Review.findOne({where:{
+      productId:productId,
+      userId:userId
+    }})
+      console.log(productUser)
+    if (!productUser) {
       let review = await Review.create({
         description: description,
         ranking: ranking,
+        userId: userId,
+        productId: productId
       });
-      await product.addReview(review);
+      // await productUser.addReview(review);
 
-      res.status(200).send({ message: "saved review" });
+       res.status(200).send({ message: "saved review" });
     } else {
-      res.status(400).send({ message: "product not found" });
+      res.status(400).send({ message: "The product has already been valued" });
     }
   } catch (err) {
     console.log(err.message);
