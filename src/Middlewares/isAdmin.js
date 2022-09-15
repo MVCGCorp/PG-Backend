@@ -1,5 +1,5 @@
 module.exports = (req, res, next) => {    
-    if (req.user.rol === "admin" || req.user.rol === "mododios") {
+    if (req.loginUser.rol === "admin" || req.loginUser.rol === "mododios") {
 		console.log('Bienvenido Administrador')
 				next();
 	} else {
