@@ -7,6 +7,7 @@ const categoryRouter = require("./routes/category");
 const userRouter = require("./routes/user");
 const orderRouter = require("./routes/order")
 const paymentRouter = require("./routes/payment")
+const paymentSuccessRouter = require("./routes/stripe")
 const reviewRouter = require("./routes/review")
 const auth = require("./routes/auth")
 const { CORS_URL } = process.env //variable de entorno local => CORS_URL=http://localhost:3000
@@ -15,8 +16,7 @@ require("./db.js");
 
 const app = express();
 
-app.use(express.json());
-app.use(express.static("public"));
+app.use("/stripe", paymentSuccessRouter);
 
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 app.use(bodyParser.json({ limit: "50mb" }));
