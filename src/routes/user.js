@@ -158,8 +158,8 @@ route.put("/:id", async (req, res) => {
 
 route.post("/:id/cart", (req, res) => {
 
-  const productId = req.body.productId.id;
-  const price = req.body.productId.price;
+  const productId = req.body.prodDetail.id;
+  const price = req.body.prodDetail.price;
 
   const quantity = req.body.quantity;
   const { id } = req.params;
