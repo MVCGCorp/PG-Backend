@@ -128,7 +128,7 @@ route.post("/", isAdmin, async (req, res, next) => {
 
 // DELETE: eliminar producto
 
-route.delete("/:id", isAdmin, async (req, res, next) => {
+route.put("/delete/:id", isAdmin, async (req, res, next) => {
   const { id } = req.params;
   try {
     const deletedProduct = await Product.destroy({
