@@ -13,14 +13,6 @@ const reviewRouter = require("./routes/review")
 const auth = require("./routes/auth")
 const { CORS_URL } = process.env //variable de entorno local => CORS_URL=http://localhost:3000
 
-const orderRouter = require("./routes/order");
-const paymentRouter = require("./routes/payment");
-const stripeRouter = require("./routes/stripe")
-const reviewRouter = require("./routes/review");
-const auth = require("./routes/auth");
-const { CORS_URL } = process.env; //variable de entorno local => CORS_URL=http://localhost:3000
-
-
 require("./db.js");
 
 const app = express();
