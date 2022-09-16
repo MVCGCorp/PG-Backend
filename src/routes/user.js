@@ -74,17 +74,18 @@ MODIFICA ROL DEL USUARIO
 //  isAdminGod,
 route.put("/change/:id", isAdminGod, async (req, res) => {
   const { id } = req.params;
-  const { isDisable, userRol } = req.body;
-  if (!userRol && !isDisable) {
-    res
-      .status(400)
-      .send("Faltan datos");
-  }
+  const { rol } = req.query;
+  const { isDisable } = req.body;
+  //if (!userRol && !isDisable) {
+   // res
+   //   .status(400)
+  //    .send("Faltan datos");
+//  }
 
   try {
     const user = await User.update(
       {
-        userRol, 
+        rol, 
         isDisable
       },
       {
@@ -128,58 +129,22 @@ route.put("/:id", async (req, res) => {
   }
 });
 
-// route.delete("/:id", async (req, res, next) => {
-//   const { id } = req.params;
-//   try {
-//     const userId = await User.destroy({
-//       where: {
-//         id,
-//       },
-//     });
-//     return res.status(200).send(`${userId} deleted`);
-//   } catch (error) {
-//     console.log(error);
-//     return res.send(error);
-//   }
-// });
+ route.delete("/:id", isAdminGod, async (req, res, next) => {
+   const { id } = req.params;
+   try {
+     const userId = await User.destroy({
+       where: {
+         id,
+       },
+     });
+     return res.status(200).send(`${userId} deleted`);
+   } catch (error) {
+     console.log(error);
+     return res.send(error);
+   }
+ });
 
 
-/*
-MODIFICA ROL DEL USUARIO
-*/
-
-// PUT SOLO A ROL
-//  isAdminGod,
-
-route.put("/modificar/:id", isAdminGod, async (req, res) => {
-
-
-  const { id } = req.params;
-  const { rol, isDisable } = req.body;
-  if (!rol && !isDisable) {
-    res
-      .status(400)
-      .send("Faltan datos");
-  }
-
-  try {
-    const user = await User.update(
-      {
-        rol, 
-        isDisable
-      },
-      {
-        where: {
-          id: id,
-        },
-      }
-    );
-    res.status(200).send(`${user} has been modify`);
-  } catch (error) {
-    console.log(error);
-    res.send(error);
-  }
-});
 
 //Rutas carrito.
 
@@ -193,8 +158,8 @@ route.put("/modificar/:id", isAdminGod, async (req, res) => {
 
 route.post("/:id/cart", (req, res) => {
 
-  const productId = req.body.productId.id;
-  const price = req.body.productId.price;
+  const productId = req.body.prodDetail.id;
+  const price = req.body.prodDetail.price;
 
   const quantity = req.body.quantity;
   const { id } = req.params;
