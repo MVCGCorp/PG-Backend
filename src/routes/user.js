@@ -115,7 +115,7 @@ MODIFICA ROL DEL USUARIO
 
 // PUT SOLO A ROL
 //  isAdminGod,
-route.put("/:id/modificar", async (req, res) => {
+route.put("/modificar/:id", async (req, res) => {
   const { id } = req.params;
   const { rol, isDisable } = req.body;
   if (!rol && !isDisable) {
@@ -302,7 +302,7 @@ route.put("/:id/cart", async (req, res) => {
     if (quantityUpdate)
       return res.send(`${quantityUpdate} product quantity has been updated`);
 
-    return res.status(400).json({ msg: "Update cannot de done" });
+    return res.status(400).json({ msg: "Update cannot be done" });
   } catch (error) {
     res.status(404).send(error);
   }
