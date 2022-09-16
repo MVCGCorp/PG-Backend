@@ -75,7 +75,7 @@ route.post("/", isAdmin, async (req, res) => {
   }
 });
 
-route.delete("/:id", isAdmin, async (req, res) => {
+route.put("/delete/:id", isAdmin, async (req, res) => {
   const { id } = req.params
 
   try {
