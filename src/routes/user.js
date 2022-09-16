@@ -72,10 +72,10 @@ MODIFICA ROL DEL USUARIO
 
 // PUT SOLO A ROL
 //  isAdminGod,
-route.put("/change/:id", async (req, res) => {
+route.put("/change/:id", isAdminGod, async (req, res) => {
   const { id } = req.params;
-  const { rol, isDisable } = req.body;
-  if (!rol && !isDisable) {
+  const { isDisable, userRol } = req.body;
+  if (!userRol && !isDisable) {
     res
       .status(400)
       .send("Faltan datos");
@@ -84,7 +84,7 @@ route.put("/change/:id", async (req, res) => {
   try {
     const user = await User.update(
       {
-        rol, 
+        userRol, 
         isDisable
       },
       {
