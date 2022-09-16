@@ -66,6 +66,40 @@ route.post("/", async (req, res) => {
   }
 });
 
+/*
+MODIFICA ROL DEL USUARIO
+*/
+
+// PUT SOLO A ROL
+//  isAdminGod,
+route.put("/change/:id", isAdminGod, async (req, res) => {
+  const { id } = req.params;
+  const { isDisable, userRol } = req.body;
+  if (!userRol && !isDisable) {
+    res
+      .status(400)
+      .send("Faltan datos");
+  }
+
+  try {
+    const user = await User.update(
+      {
+        userRol, 
+        isDisable
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+    res.status(200).send(`${user} has been modify`);
+  } catch (error) {
+    console.log(error);
+    res.send(error);
+  }
+});
+
 route.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { given_name, family_name, email, nickname } = req.body;
@@ -109,6 +143,7 @@ route.put("/:id", async (req, res) => {
 //   }
 // });
 
+
 /*
 MODIFICA ROL DEL USUARIO
 */
@@ -116,7 +151,7 @@ MODIFICA ROL DEL USUARIO
 // PUT SOLO A ROL
 //  isAdminGod,
 
-route.put("/modificar/:id", async (req, res) => {
+route.put("/modificar/:id", isAdminGod, async (req, res) => {
 
 
   const { id } = req.params;
