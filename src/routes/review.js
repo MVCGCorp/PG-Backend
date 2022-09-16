@@ -14,6 +14,25 @@ route.get("/", async (req, res, next) => {
   }
 });
 
+route.get("/:userid/:prodid", async (req, res, next) => {
+  const {userid, prodid} = req.params
+  try {
+    const reviews = await Review.findAll({where:{
+      userId:userid,
+      productId:prodid
+    }});
+
+    if(reviews){
+      res.status(200).json(reviews);
+    }else{
+      res.status(404).send("Reviews Not Found")
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(404).send("Error Reviews");
+  }
+});
+
 route.post("/", async (req, res, next) => {
   const { productId, description, ranking, userId } = req.body;
   if (!productId || !description || !ranking) {
