@@ -5,11 +5,11 @@ const bodyParser = require("body-parser");
 const productsRouter = require("./routes/products");
 const categoryRouter = require("./routes/category");
 const userRouter = require("./routes/user");
-const orderRouter = require("./routes/order")
-const paymentRouter = require("./routes/payment")
-const reviewRouter = require("./routes/review")
-const auth = require("./routes/auth")
-const { CORS_URL } = process.env //variable de entorno local => CORS_URL=http://localhost:3000
+const orderRouter = require("./routes/order");
+const paymentRouter = require("./routes/payment");
+const reviewRouter = require("./routes/review");
+const auth = require("./routes/auth");
+const { CORS_URL } = process.env; //variable de entorno local => CORS_URL=http://localhost:3000
 
 require("./db.js");
 
@@ -46,8 +46,8 @@ app.use("/category", categoryRouter);
 app.use("/user", userRouter);
 app.use("/review", reviewRouter);
 app.use("/auth", auth);
-app.use("/order", orderRouter);
 app.use("/payment", paymentRouter);
+app.use("/order", orderRouter);
 
 app.get("/", (req, res) => {
   res.send(

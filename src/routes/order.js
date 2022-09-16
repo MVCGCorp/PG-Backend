@@ -4,11 +4,11 @@ const route = express.Router();
 
 const { Product, User, Order, OrderDetail } = require("../db.js");
 
-const isAdmin = require('../Middlewares/isAdmin.js')
+const isAdmin = require("../Middlewares/isAdmin.js");
 
 // Ruta GET para traer todas las ordenes o filtradas por status
 
-route.get("/orders", isAdmin, async (req, res) => {
+route.put("/", isAdmin, async (req, res) => {
   const status = req.query.status;
   //   console.log("statusss", status);
   try {
@@ -37,7 +37,7 @@ route.get("/orders", isAdmin, async (req, res) => {
 
 // Ruta GET para traer una orden por ID
 
-route.get("/orders/:id", isAdmin, async (req, res) => {
+route.put("/:id", isAdmin, async (req, res) => {
   const orderId = req.params;
   console.log("IDD", orderId.id);
   try {
@@ -57,7 +57,7 @@ route.get("/orders/:id", isAdmin, async (req, res) => {
 
 //Ruta PUT para modificar el estado de la orden
 
-route.put("/:id", isAdmin, async (req, res) => {
+route.put("/editstatus/:id", isAdmin, async (req, res) => {
   const orderId = req.params;
   const status = req.body;
 

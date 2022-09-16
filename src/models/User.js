@@ -35,7 +35,11 @@ module.exports = (sequelize) => {
     rol: {
       type: DataTypes.STRING,
       allowNull: true,
-      // values: ["user", "admin", "mododios"],
+      validate: { 
+        isIn:{ args: [['user', 'admin', 'mododios']],
+        msg: "Rol can only be either 'user', 'admin' or 'mododios'"
+      }
+    },
       defaultValue: "user",
     },
    isDisable:{
@@ -43,20 +47,6 @@ module.exports = (sequelize) => {
     defaultValue: false,
     allowNull: false
 }
-    
-    // password: {
-    //   type: DataTypes.STRING,
-    //   allowNull: false,
-    //   validate: {
-    //     notNull: { 
-    //       args: true, 
-    //       msg: 'password can\'t be empty' 
-    //     },           
-    //     len: { 
-    //       args: [5, 50],
-    //       msg: 'password length must be more than 5 characters' 
-    //       },
-    // }
-    // },
+
   });
 };

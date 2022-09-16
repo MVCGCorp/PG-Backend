@@ -1,3 +1,4 @@
+
 module.exports = (req, res, next) => {    
     if (req.loginUser.rol === "admin" || req.loginUser.rol === "mododios") {
 		console.log('Bienvenido Administrador')
@@ -7,3 +8,4 @@ module.exports = (req, res, next) => {
 		res.status(401).json({ msg: "Acceso no autorizado" })
 	}
 }
+
