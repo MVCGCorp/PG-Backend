@@ -14,15 +14,14 @@ route.get("/", async (req, res, next) => {
   }
 });
 
-route.get("/:userid/:prodid", async (req, res, next) => {
-  const {userid, prodid} = req.params
+route.get("/:prodid", async (req, res, next) => {
+  const { prodid } = req.params
   try {
     const reviews = await Review.findAll({where:{
-      userId:userid,
       productId:prodid
     }});
 
-    if(reviews){
+    if(reviews.length){
       res.status(200).json(reviews);
     }else{
       res.status(404).send("Reviews Not Found")
