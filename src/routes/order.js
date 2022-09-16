@@ -57,7 +57,7 @@ route.put("/:id", isAdmin, async (req, res) => {
 
 //Ruta PUT para modificar el estado de la orden
 
-route.put("/:id", isAdmin, async (req, res) => {
+route.put("/editstatus/:id", isAdmin, async (req, res) => {
   const orderId = req.params;
   const status = req.body;
 
