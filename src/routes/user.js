@@ -115,7 +115,10 @@ MODIFICA ROL DEL USUARIO
 
 // PUT SOLO A ROL
 //  isAdminGod,
+
 route.put("/modificar/:id", async (req, res) => {
+
+
   const { id } = req.params;
   const { rol, isDisable } = req.body;
   if (!rol && !isDisable) {
@@ -154,8 +157,10 @@ route.put("/modificar/:id", async (req, res) => {
 //Ruta POST para agregar productos al carrito
 
 route.post("/:id/cart", (req, res) => {
-  const productId = req.body.prodDetail.id;
-  const price = req.body.prodDetail.price;
+
+  const productId = req.body.productId.id;
+  const price = req.body.productId.price;
+
   const quantity = req.body.quantity;
   const { id } = req.params;
   if (id) {
