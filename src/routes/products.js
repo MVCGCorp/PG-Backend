@@ -169,7 +169,7 @@ route.put("/:id", isAdmin, async (req, res) => {
       });
       // console.log('match', match.toJSON())
       if (match) {
-        await product.setCategories(match);
+        await product.addCategory(match);
       }
     }
 
