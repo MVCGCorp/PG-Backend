@@ -8,7 +8,7 @@ const isAdmin = require("../Middlewares/isAdmin.js");
 
 // Ruta GET para traer todas las ordenes o filtradas por status
 
-route.get("/", isAdmin, async (req, res) => {
+route.put("/", isAdmin, async (req, res) => {
   const status = req.query.status;
   //   console.log("statusss", status);
   try {
@@ -37,7 +37,7 @@ route.get("/", isAdmin, async (req, res) => {
 
 // Ruta GET para traer una orden por ID
 
-route.get("/:id", isAdmin, async (req, res) => {
+route.put("/:id", isAdmin, async (req, res) => {
   const orderId = req.params;
   console.log("IDD", orderId.id);
   try {
