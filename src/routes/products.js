@@ -92,7 +92,7 @@ route.post("/", isAdmin, async (req, res, next) => {
     price,
     stock,
     image,
-    // statusId,
+    status,
     shortDescription,
     category,
   } = req.body;
@@ -108,7 +108,7 @@ route.post("/", isAdmin, async (req, res, next) => {
         price: price,
         stock: stock,
         image: image,
-        // status: statusId,
+        status: status || false,
       },
     });
     const match = await Category.findAll({
@@ -150,7 +150,7 @@ route.put("/:id", isAdmin, async (req, res) => {
     price,
     stock,
     image,
-    statusId,
+    status,
     shortDescription,
     category,
   } = req.body;
@@ -180,7 +180,7 @@ route.put("/:id", isAdmin, async (req, res) => {
         price,
         stock,
         image,
-        statusId,
+        status,
         shortDescription,
         category,
       },

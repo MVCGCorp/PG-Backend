@@ -66,6 +66,40 @@ route.post("/", async (req, res) => {
   }
 });
 
+/*
+MODIFICA ROL DEL USUARIO
+*/
+
+// PUT SOLO A ROL
+//  isAdminGod,
+route.put("/change/:id", isAdminGod, async (req, res) => {
+  const { id } = req.params;
+  const { isDisable, userRol } = req.body;
+  if (!userRol && !isDisable) {
+    res
+      .status(400)
+      .send("Faltan datos");
+  }
+
+  try {
+    const user = await User.update(
+      {
+        userRol, 
+        isDisable
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+    res.status(200).send(`${user} has been modify`);
+  } catch (error) {
+    console.log(error);
+    res.send(error);
+  }
+});
+
 route.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { given_name, family_name, email, nickname } = req.body;
@@ -109,13 +143,17 @@ route.put("/:id", async (req, res) => {
 //   }
 // });
 
+
 /*
 MODIFICA ROL DEL USUARIO
 */
 
 // PUT SOLO A ROL
 //  isAdminGod,
-route.put("/:id/modificar", isAdminGod, async (req, res) => {
+
+route.put("/modificar/:id", isAdminGod, async (req, res) => {
+
+
   const { id } = req.params;
   const { rol, isDisable } = req.body;
   if (!rol && !isDisable) {
@@ -154,8 +192,10 @@ route.put("/:id/modificar", isAdminGod, async (req, res) => {
 //Ruta POST para agregar productos al carrito
 
 route.post("/:id/cart", (req, res) => {
+
   const productId = req.body.productId.id;
   const price = req.body.productId.price;
+
   const quantity = req.body.quantity;
   const { id } = req.params;
   if (id) {
@@ -302,7 +342,7 @@ route.put("/:id/cart", async (req, res) => {
     if (quantityUpdate)
       return res.send(`${quantityUpdate} product quantity has been updated`);
 
-    return res.status(400).json({ msg: "Update cannot de done" });
+    return res.status(400).json({ msg: "Update cannot be done" });
   } catch (error) {
     res.status(404).send(error);
   }
