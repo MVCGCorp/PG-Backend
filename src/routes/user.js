@@ -75,11 +75,11 @@ MODIFICA ROL DEL USUARIO
 route.put("/change/:id", isAdminGod, async (req, res) => {
   const { id } = req.params;
   const { isDisable, userRol } = req.body;
-  if (!userRol && !isDisable) {
-    res
-      .status(400)
-      .send("Faltan datos");
-  }
+  //if (!userRol && !isDisable) {
+   // res
+   //   .status(400)
+  //    .send("Faltan datos");
+//  }
 
   try {
     const user = await User.update(
