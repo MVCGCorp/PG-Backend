@@ -44,7 +44,7 @@ route.get("/:id", async (req, res) => {
 });
 
 route.post("/", async (req, res) => {
-  const { given_name, family_name, email, rol, nickname } = req.body;
+  const { given_name, family_name, email, rol, nickname, image } = req.body;
   if (!email) {
     return res.status(400).send("Some data is missing");
   }
@@ -56,6 +56,7 @@ route.post("/", async (req, res) => {
         email: email,
         nickname: nickname || "incompleted",
         rol: rol || "user",
+        image: image
       },
     });
 
