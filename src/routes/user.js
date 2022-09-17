@@ -6,25 +6,25 @@ const { Product, User, Order, OrderDetail } = require("../db.js");
 const isAdminGod = require("../Middlewares/isAdminGod.js");
 
 route.get("/", async (req, res, next) => {
-  const { email } = req.query
+  const { email } = req.query;
   try {
-    if(email){
+    if (email) {
       const userEmail = await User.findOne({
-        where:{
-          email: email
-        }
+        where: {
+          email: email,
+        },
       });
       return userEmail
-      ? res.status(200).send(userEmail)
-      : res.status(404).send("user not found")
+        ? res.status(200).send(userEmail)
+        : res.status(404).send("user not found");
     }
-    const users= await User.findAll();
+    const users = await User.findAll();
     return users
-    ? res.status(200).send(users)
-    : res.status(404).send("No users on DB")
+      ? res.status(200).send(users)
+      : res.status(404).send("No users on DB");
   } catch (error) {
     console.log(error);
-    return res.status(400).json({msg: error})
+    return res.status(400).json({ msg: error });
   }
 });
 
@@ -77,16 +77,16 @@ route.put("/change/:id", isAdminGod, async (req, res) => {
   const { rol } = req.query;
   const { isDisable } = req.body;
   //if (!userRol && !isDisable) {
-   // res
-   //   .status(400)
+  // res
+  //   .status(400)
   //    .send("Faltan datos");
-//  }
+  //  }
 
   try {
     const user = await User.update(
       {
-        rol, 
-        isDisable
+        rol,
+        isDisable,
       },
       {
         where: {
@@ -129,22 +129,20 @@ route.put("/:id", async (req, res) => {
   }
 });
 
- route.delete("/:id", isAdminGod, async (req, res, next) => {
-   const { id } = req.params;
-   try {
-     const userId = await User.destroy({
-       where: {
-         id,
-       },
-     });
-     return res.status(200).send(`${userId} deleted`);
-   } catch (error) {
-     console.log(error);
-     return res.send(error);
-   }
- });
-
-
+route.delete("/:id", isAdminGod, async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const userId = await User.destroy({
+      where: {
+        id,
+      },
+    });
+    return res.status(200).send(`${userId} deleted`);
+  } catch (error) {
+    console.log(error);
+    return res.send(error);
+  }
+});
 
 //Rutas carrito.
 
@@ -157,7 +155,6 @@ route.put("/:id", async (req, res) => {
 //Ruta POST para agregar productos al carrito
 
 route.post("/:id/cart", (req, res) => {
-
   const productId = req.body.prodDetail.id;
   const price = req.body.prodDetail.price;
 
@@ -222,6 +219,35 @@ route.get("/:id/order/:status", (req, res) => {
     .catch((err) => {
       res.status(400).json("Order not found" + err);
     });
+});
+
+//Ruta GET para calcular el precio final de venta
+
+route.get("/:id/precio_final", async (req, res) => {
+  let { userId } = req.body;
+
+  try {
+    const order = await Order.findOne({
+      where: {
+        id: userId,
+        status: "carrito",
+      },
+    });
+
+    const detail = await OrderDetail.findAll({
+      where: {
+        orderId: order.id,
+      },
+    });
+
+    const precio_final = detail
+      .map((data) => data.price * data.quantity)
+      .reduce((a, b) => a + b, 0);
+
+    res.status(200).json({precio_final: precio_final});
+  } catch (error) {
+    res.status(400).json(error.message);
+  }
 });
 
 //Ruta GET para traer las ordenes de un usuario
