@@ -44,7 +44,7 @@ route.get("/:id", async (req, res) => {
 });
 
 route.post("/", async (req, res) => {
-  const { given_name, family_name, email, rol, nickname, image } = req.body;
+  const { given_name, family_name, email, rol, nickname, picture } = req.body;
   if (!email) {
     return res.status(400).send("Some data is missing");
   }
@@ -56,7 +56,7 @@ route.post("/", async (req, res) => {
         email: email,
         nickname: nickname || "incompleted",
         rol: rol || "user",
-        image: image || "img not found"
+        picture: picture || "img not found"
       },
     });
 
@@ -104,7 +104,7 @@ route.put("/change/:id", isAdminGod, async (req, res) => {
 
 route.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { given_name, family_name, email, nickname, image } = req.body;
+  const { given_name, family_name, email, nickname, picture } = req.body;
   if (!email && !given_name && !family_name) {
     res.status(400).send("No estas modificando ningun campo");
   }
@@ -116,7 +116,7 @@ route.put("/:id", async (req, res) => {
         family_name,
         email,
         nickname,
-        image
+        picture
       },
       {
         where: {
