@@ -104,7 +104,7 @@ route.put("/change/:id", isAdminGod, async (req, res) => {
 
 route.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { given_name, family_name, email, nickname } = req.body;
+  const { given_name, family_name, email, nickname, image } = req.body;
   if (!email && !given_name && !family_name) {
     res.status(400).send("No estas modificando ningun campo");
   }
@@ -116,6 +116,7 @@ route.put("/:id", async (req, res) => {
         family_name,
         email,
         nickname,
+        image
       },
       {
         where: {
