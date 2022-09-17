@@ -56,7 +56,7 @@ route.post("/", async (req, res) => {
         email: email,
         nickname: nickname || "incompleted",
         rol: rol || "user",
-        image: image
+        image: image || "img not found"
       },
     });
 
