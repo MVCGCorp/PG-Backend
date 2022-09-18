@@ -224,19 +224,20 @@ route.get("/:id/order/:status", (req, res) => {
 //Ruta GET para calcular el precio final de venta
 
 route.get("/:id/precio_final", async (req, res) => {
-  let { userId } = req.body;
+  let { id } = req.params;
 
   try {
     const order = await Order.findOne({
       where: {
-        id: userId,
+        userId: id,
         status: "carrito",
       },
     });
 
+    
     const detail = await OrderDetail.findAll({
       where: {
-        orderId: order.id,
+        orderId: order.dataValues.id,
       },
     });
 
@@ -246,7 +247,7 @@ route.get("/:id/precio_final", async (req, res) => {
 
     res.status(200).json({precio_final: precio_final});
   } catch (error) {
-    res.status(400).json(error.message);
+    res.status(404).send({menssage: "id not found"});
   }
 });
 

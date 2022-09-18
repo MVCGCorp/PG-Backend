@@ -1,44 +1,44 @@
 const express = require("express");
 const route = express.Router();
-const { Order } = require("../db.js");
-const { Sequelize, Op, where } = require("sequelize");
+const { Order, OrderDetail } = require("../db.js");
 const { STRIPE } = process.env;
 const stripe = require("stripe")(STRIPE);
 
-const calculateOrderAmount = async (userId) => {
+const calculateOrderAmount = (detail) => {
   try {
-    const order = await Order.findOne({
-      where: {
-        id: userId,
-        status: "carrito",
-      },
-    });
-
-    const detail = await OrderDetail.findAll({
-      where: {
-        orderId: order.id,
-      },
-    });
-
-    const precio_final = detail
-      .map((data) => data.price * data.quantity)
-      .reduce((a, b) => a + b, 0);
+    const precio_final =
+      detail
+        .map((data) => data.dataValues.price * data.dataValues.quantity)
+        .reduce((a, b) => a + b, 0) * 100;
 
     return precio_final;
   } catch (error) {
-    console.log(err);
+    console.log(error);
   }
 };
 
 route.post("/create-payment-intent", async (req, res) => {
   const { userId } = req.body;
+
+  const order = await Order.findOne({
+    where: {
+      userId: userId,
+      status: "carrito",
+    },
+  });
+
+  const detail = await OrderDetail.findAll({
+    where: {
+      orderId: order.dataValues.id
+    },
+  });
+
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: calculateOrderAmount(userId),
-    description: userId,
+    amount: calculateOrderAmount(detail),
+    description: `${userId}`,
     currency: "ars",
     automatic_payment_methods: { enabled: true },
   });
-  console.log(email);
   res.send({ clientSecret: paymentIntent.client_secret });
 });
 
