@@ -160,10 +160,10 @@ route.put("/:id", async (req, res) => {
 
 route.post("/:id/cart", (req, res) => {
 
-  const productId = req.body.quantProd.prodDetail.id;
-  const price = req.body.quantProd.prodDetail.price;
+  const productId = req.body.prodDetail.id;
+  const price = req.body.prodDetail.price;
 
-  const quantity = req.body.quantProd.quantity;
+  const quantity = req.body.quantity;
   const { id } = req.params;
   if (id) {
     Order.findOne({ where: { userId: id, status: "carrito" } })
