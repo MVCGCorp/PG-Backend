@@ -55,31 +55,36 @@ let capsEntries = entries.map((entry) => [
 ]);
 sequelize.models = Object.fromEntries(capsEntries);
 
-const { Product, Category, User, Order, OrderDetail, Review } = sequelize.models;
+const { Product, Category, User, Order, OrderDetail, Review, Favourites } = sequelize.models;
 
 // console.log('order', OrderDetail)
 
 // Model1.belongsToMany(Model2, { through: "TabalIntermedia" });
 // Model2.belongsToMany(Model1, { through: "TabalIntermedia" });
 
-Product.belongsToMany(Category, {through: "ProductCategory"})
-Category.belongsToMany(Product, {through: "ProductCategory"})
+Product.belongsToMany(Category, {through: "ProductCategory"});
+Category.belongsToMany(Product, {through: "ProductCategory"});
 
 
-User.hasMany(Order) //crea "UserId" en Order
-Order.belongsTo(User) //, {through: "OrderUser"}
+User.hasMany(Order);//crea "UserId" en Order
+Order.belongsTo(User) ;//, {through: "OrderUser"}
 // Order.belongsTo(User) // no necesita segunda parametro
 // Order.hasMany(OrderDetail) //crea "OrderId" en OrderDetail
 // Product.hasMany(OrderDetail) //crea "ProductId" en OrderDetail
 
-Product.hasMany(Review)
-Review.belongsTo(Product)
+Product.hasMany(Review);
+Review.belongsTo(Product);
 
-User.hasMany(Review)
-Review.belongsTo(User)
+User.hasMany(Review);
+Review.belongsTo(User);
 
 Order.belongsToMany(Product, { through: OrderDetail});
 Product.belongsToMany(Order, { through: OrderDetail});
+
+
+
+User.belongsToMany(Product, {through: Favourites});
+Product.belongsToMany(User, {through: Favourites});
 
 
 module.exports = {

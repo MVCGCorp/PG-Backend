@@ -1,9 +1,10 @@
 const express = require("express");
 
 const route = express.Router();
-const { Product, User, Order, OrderDetail } = require("../db.js");
+const { Product, User, Order, OrderDetail, Favourites } = require("../db.js");
 
 const isAdminGod = require("../Middlewares/isAdminGod.js");
+
 
 route.get("/", async (req, res, next) => {
   const { email } = req.query;
@@ -56,7 +57,7 @@ route.post("/", async (req, res) => {
         email: email,
         nickname: nickname || "incompleted",
         rol: rol || "user",
-        picture: picture || "img not found"
+        picture: picture || "img not found",
       },
     });
 
@@ -116,7 +117,7 @@ route.put("/:id", async (req, res) => {
         family_name,
         email,
         nickname,
-        picture
+        picture,
       },
       {
         where: {
@@ -201,24 +202,25 @@ route.post("/:id/cart", (req, res) => {
 //Ruta GET para traer los productos del carrito de un usuario
 
 route.get("/:id/order", (req, res) => {
-//  let { id } = req.params;
+  //  let { id } = req.params;
   let { id } = req.query;
 
-//  Order.findOne({
-//    where: {
-//      userId: id,
-//      status: status,
-//    },
-//  })
-//    .then((order) => {
-      OrderDetail.findAll({
-        where: {
-          orderId: id,
-        },
-      }).then((orderdetail) => {
-        res.status(200).json(orderdetail);
-      })
-//    })
+  //  Order.findOne({
+  //    where: {
+  //      userId: id,
+  //      status: status,
+  //    },
+  //  })
+  //    .then((order) => {
+  OrderDetail.findAll({
+    where: {
+      orderId: id,
+    },
+  })
+    .then((orderdetail) => {
+      res.status(200).json(orderdetail);
+    })
+    //    })
     .catch((err) => {
       res.status(400).json("Order not found" + err);
     });
@@ -237,7 +239,6 @@ route.get("/:id/precio_final", async (req, res) => {
       },
     });
 
-    
     const detail = await OrderDetail.findAll({
       where: {
         orderId: order.dataValues.id,
@@ -248,9 +249,9 @@ route.get("/:id/precio_final", async (req, res) => {
       .map((data) => data.price * data.quantity)
       .reduce((a, b) => a + b, 0);
 
-    res.status(200).json({precio_final: precio_final});
+    res.status(200).json({ precio_final: precio_final });
   } catch (error) {
-    res.status(404).send({menssage: "id not found"});
+    res.status(404).send({ menssage: "id not found" });
   }
 });
 
@@ -342,5 +343,54 @@ route.put("/:id/cart", async (req, res) => {
     res.status(404).send(error);
   }
 });
+
+/*
+ RUTAS A FAVORITOS/WISHLIST
+*/
+
+route.post("/favourites/:id", async (req, res) => {
+  let { id } = req.params
+  let { productId } = req.body
+
+  console.log('id', id)
+  console.log('productId', productId)
+  
+  if (!productId) {
+    return res.status(400).send("Some data is missing");
+  }
+  try {
+    let [favSaved, Created] = await Favourites.findOrCreate({
+      where: { 
+        userId: id,
+        productId: productId
+      },
+    });
+    // await favSaved.addProduct(productId, { through: Favourites });
+    return !Created
+      ? res.status(404).send(`${productId} is already in your wishlist`)
+      : res.status(200).json(Created);
+  } catch (err) {
+    console.log(err.message);
+    res.status(404).json(err.message);
+  }
+  });
+
+
+  route.get("/favourites/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+      if (id) {
+          let favs = await Favourites.findAll({ 
+            where: { userId: id },
+          });
+          res.json(favs)
+          console.log('fav', favs)
+      } else {
+          res.status(404).send({ msg: "Faltan datos" });
+      }
+  } catch (err) {
+      console.log(err);
+  }
+    });
 
 module.exports = route;
