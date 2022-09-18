@@ -24,16 +24,18 @@ route.post("/webhook", express.raw({ type: "application/json" }),
         id: orderId,
       },
     });
+  if(orderBuy.id){    await orderBuy.update({
+    status:
+      event.type === "charge.succeeded"
+        ? "completada"
+        : event.type === "charge.failed"
+        ? "rechazada"
+        : "procesando",
+  });
+  return res.send({[event.type]: `usuario: ${userId} y orden: ${orderId}`})
+}
+return res.send("no se encuentra la orden")
 
-    await orderBuy.update({
-      status:
-        event.type === "charge.succeeded"
-          ? "completada"
-          : event.type === "charge.failed"
-          ? "rechazada"
-          : "procesando",
-    });
-    res.send({[event.type]: `usuario: ${userId} y orden: ${orderId}`})
   });
 
 module.exports = route;
