@@ -204,24 +204,24 @@ route.post("/:id/cart", (req, res) => {
 //Ruta GET para traer los productos del carrito de un usuario
 
 route.get("/:id/order", (req, res) => {
-  let { id } = req.params;
-  let { status } = req.query;
+//  let { id } = req.params;
+  let { id } = req.query;
 
-  Order.findOne({
-    where: {
-      userId: id,
-      status: status,
-    },
-  })
-    .then((order) => {
+//  Order.findOne({
+//    where: {
+//      userId: id,
+//      status: status,
+//    },
+//  })
+//    .then((order) => {
       OrderDetail.findAll({
         where: {
-          orderId: order.id,
+          id: id,
         },
       }).then((orderdetail) => {
         res.status(200).json(orderdetail);
-      });
-    })
+      })
+//    })
     .catch((err) => {
       res.status(400).json("Order not found" + err);
     });
