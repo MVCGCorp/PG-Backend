@@ -18,24 +18,44 @@ const calculateOrderAmount = (detail) => {
 };
 
 route.post("/create-payment-intent", async (req, res) => {
-  const { userId } = req.body;
+  const {userId, productId, price, quantity } = req.body;
 
-  const order = await Order.findOne({
-    where: {
-      userId: userId,
-      status: "carrito",
-    },
-  });
+let user_order
+let amountFinal
+  if (productId) {
+    const newOrder = await Order.create({
+      status: "procesando",
+    });
+    await newOrder.setUser(userId);
+    const orderDetail = await OrderDetail.create({
+      price,
+      quantity,
+      orderId: newOrder.id,
+      productId: productId,
+    });
+    user_order = `${userId}:${orderDetail.dataValues.orderId}`
+    amountFinal = price * quantity * 100
+    
+  } else if (!productId) {
+    const order = await Order.findOne({
+      where: {
+        userId: userId,
+        status: "carrito",
+      },
+    });
 
-  const detail = await OrderDetail.findAll({
-    where: {
-      orderId: order.dataValues.id
-    },
-  });
+    const detail = await OrderDetail.findAll({
+      where: {
+        orderId: order.dataValues.id,
+      },
+    });
+    user_order = `${userId}:${detail[0].dataValues.orderId}`
+    amountFinal = calculateOrderAmount(detail)
+  }
 
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: calculateOrderAmount(detail),
-    description: `${userId}`,
+    amount: amountFinal,
+    description: user_order,
     currency: "ars",
     automatic_payment_methods: { enabled: true },
   });
