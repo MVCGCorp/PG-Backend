@@ -158,10 +158,10 @@ route.delete("/:id", isAdminGod, async (req, res, next) => {
 //Ruta POST para agregar productos al carrito
 
 route.post("/:id/cart", (req, res) => {
-  const productId = req.body.prodDetail.id;
-  const price = req.body.prodDetail.price;
+  const productId = req.body.prodTotal.prodDetail.id;
+  const price = req.body.prodTotal.prodDetail.price;
 
-  const quantity = req.body.quantity;
+  const quantity = req.body.prodTotal.quantity;
   const { id } = req.params;
   if (id) {
     Order.findOne({ where: { userId: id, status: "carrito" } })
