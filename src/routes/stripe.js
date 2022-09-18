@@ -4,9 +4,7 @@ const { Order } = require("../db.js");
 const { STRIPE, WEBHOOK } = process.env;
 const stripe = require("stripe")(STRIPE);
 
-route.post(
-  "/webhook",
-  express.raw({ type: "application/json" }),
+route.post("/webhook", express.raw({ type: "application/json" }),
   async (req, res) => {
     const sig = req.headers["stripe-signature"];
 
@@ -14,7 +12,7 @@ route.post(
     try {
       event = stripe.webhooks.constructEvent(req.body, sig, WEBHOOK);
     } catch (err) {
-      res.status(400).send(`Webhook Error: ${err.message}`);
+      res.status(400).send(`Cane-Food Webhook Error: ${err.message}`);
       return;
     }
     const user_order = event.data.object.description.split(":");
@@ -34,7 +32,7 @@ route.post(
           ? "rechazada"
           : "procesando",
     });
-  }
-);
+    res.send({message: "proceso finalizado"})
+  });
 
 module.exports = route;
