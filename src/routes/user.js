@@ -203,8 +203,9 @@ route.post("/:id/cart", (req, res) => {
 
 //Ruta GET para traer los productos del carrito de un usuario
 
-route.get("/:id/order/:status", (req, res) => {
-  let { id, status } = req.params;
+route.get("/:id/order", (req, res) => {
+  let { id } = req.params;
+  let { status } = req.query;
 
   Order.findOne({
     where: {
