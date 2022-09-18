@@ -202,25 +202,24 @@ route.post("/:id/cart", (req, res) => {
 //Ruta GET para traer los productos del carrito de un usuario
 
 route.get("/:id/order", (req, res) => {
-  //  let { id } = req.params;
-  let { id } = req.query;
+  let { id }  = req.params;
+  let { status} = req.query
 
-  //  Order.findOne({
-  //    where: {
-  //      userId: id,
-  //      status: status,
-  //    },
-  //  })
-  //    .then((order) => {
-  OrderDetail.findAll({
+  Order.findOne({
     where: {
-      orderId: id,
+      userId: id,
+      status: status,
     },
   })
-    .then((orderdetail) => {
-      res.status(200).json(orderdetail);
+    .then((order) => {
+      OrderDetail.findAll({
+        where: {
+          orderId: order.id,
+        },
+      }).then((orderdetail) => {
+        res.status(200).json(orderdetail);
+      });
     })
-    //    })
     .catch((err) => {
       res.status(400).json("Order not found" + err);
     });
@@ -392,4 +391,21 @@ route.post("/favourites/:id", async (req, res) => {
   }
     });
 
+  route.delete("/favourites/:userId", async (req, res) => {
+    const { userId } = req.params;
+    const { id } = req.query;
+    try {
+      const fav = await Favourites.destroy({
+        where: {
+          userId,
+          id
+        },
+      });
+      return res.status(200).send(`${fav} deleted`);
+    } catch (error) {
+      console.log(error);
+      return res.send(error);
+    }
+  });
+  
 module.exports = route;
