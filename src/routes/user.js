@@ -219,7 +219,7 @@ route.get("/:id/order", (req, res) => {
         },
       }).then((orderdetail) => {
         res.status(200).json(orderdetail);
-      });
+      })
 //    })
     .catch((err) => {
       res.status(400).json("Order not found" + err);
