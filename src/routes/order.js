@@ -60,7 +60,14 @@ route.put("/:id", isAdmin, async (req, res) => {
 route.put("/editstatus/:id", isAdmin, async (req, res) => {
   const orderId = req.params;
   const status = req.body;
-
+  if (
+    status !== "carrito" ||
+    status !== "procesando" ||
+    status !== "completada" ||
+    status !== "rechazada" ||
+    status !== "entragada"
+  )
+    res.status(400).send("You need a valid state of order");
   //   console.log("id", orderId.id)
   //   console.log("status", status.status)
   try {
