@@ -17,28 +17,23 @@ route.post(
       res.status(400).send(`Webhook Error: ${err.message}`);
       return;
     }
+    const user_order = event.data.object.description.split(":");
+    const orderId = user_order[1];
 
-    const userId = Number(event.data.object.description);
-
-    const order = await Order.findOne({
+    const orderBuy = await Order.findOne({
       where: {
-        userId: userId,
-        status: "carrito",
+        id: orderId,
       },
     });
 
-    if (order) {
-    await order.update({
+    await orderBuy.update({
       status:
         event.type === "charge.succeeded"
-          ? "success"
+          ? "completada"
           : event.type === "charge.failed"
-          ? "faile"
-          : "processing",
-    }) }
-    console.log(event.type)
-    res.send({message: event.type})
-
+          ? "rechazada"
+          : "procesando",
+    });
   }
 );
 
