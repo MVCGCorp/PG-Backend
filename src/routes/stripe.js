@@ -24,7 +24,7 @@ route.post("/webhook", express.raw({ type: "application/json" }),
         id: orderId,
       },
     });
-  if(orderBuy.id){    await orderBuy.update({
+  if(orderBuy){    await orderBuy.update({
     status:
       event.type === "charge.succeeded"
         ? "completada"
