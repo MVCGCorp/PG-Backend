@@ -227,7 +227,6 @@ route.get("/:id/order", (req, res) => {
 });
 
 //Ruta GET para calcular el precio final de venta
-
 route.get("/:id/precio_final", async (req, res) => {
   let { id } = req.params;
 
@@ -239,6 +238,7 @@ route.get("/:id/precio_final", async (req, res) => {
       },
     });
 
+    
     const detail = await OrderDetail.findAll({
       where: {
         orderId: order.dataValues.id,
@@ -249,12 +249,11 @@ route.get("/:id/precio_final", async (req, res) => {
       .map((data) => data.price * data.quantity)
       .reduce((a, b) => a + b, 0);
 
-    res.status(200).json({ precio_final: precio_final });
+    res.status(200).json({precio_final: precio_final});
   } catch (error) {
-    res.status(404).send({ menssage: "id not found" });
+    res.status(404).send({menssage: "id not found"});
   }
 });
-
 //Ruta GET para traer las ordenes de un usuario
 route.get("/:id/orders", async (req, res) => {
   const { id } = req.params;
