@@ -216,7 +216,7 @@ route.get("/:id/order", (req, res) => {
 //    .then((order) => {
       OrderDetail.findAll({
         where: {
-          id: id,
+          orderId: id,
         },
       }).then((orderdetail) => {
         res.status(200).json(orderdetail);
