@@ -209,7 +209,7 @@ route.get("/:id/order", (req, res) => {
 
   Order.findOne({
     where: {
-      id: id,
+      userId: id,
       status: status,
     },
   })
