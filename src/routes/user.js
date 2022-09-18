@@ -202,7 +202,7 @@ route.post("/:id/cart", (req, res) => {
 //Ruta GET para traer los productos del carrito de un usuario
 
 route.get("/:id/order", (req, res) => {
-  let { id }  = req.params;
+//  let { id }  = req.params;
 //  let { status} = req.query
   let { id } = req.query;
 
