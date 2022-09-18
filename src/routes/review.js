@@ -21,7 +21,7 @@ route.get("/:prodid", async (req, res, next) => {
       productId:prodid
     }});
 
-    if(reviews){
+    if(reviews.length){
       res.status(200).json(reviews);
     }else{
       res.status(404).send("Reviews Not Found")
