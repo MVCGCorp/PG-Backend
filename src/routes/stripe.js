@@ -33,7 +33,7 @@ route.post("/webhook", express.raw({ type: "application/json" }),
           ? "rechazada"
           : "procesando",
     });
-    res.send({[event.type]: `usuario: ${userId} y orden: ${orderId}})
+    res.send({[event.type]: `usuario: ${userId} y orden: ${orderId}`})
   });
 
 module.exports = route;
