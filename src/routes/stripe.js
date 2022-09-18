@@ -16,6 +16,7 @@ route.post("/webhook", express.raw({ type: "application/json" }),
       return;
     }
     const user_order = event.data.object.description.split(":");
+    const userId = user_order[0];
     const orderId = user_order[1];
 
     const orderBuy = await Order.findOne({
@@ -32,7 +33,7 @@ route.post("/webhook", express.raw({ type: "application/json" }),
           ? "rechazada"
           : "procesando",
     });
-    res.send({message: "proceso finalizado"})
+    res.send({[event.type]: `usuario: ${userId} y orden: ${orderId}})
   });
 
 module.exports = route;
