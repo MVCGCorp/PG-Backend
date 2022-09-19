@@ -22,7 +22,7 @@ route.post("/create-payment-intent", async (req, res) => {
 
 let user_order
 let amountFinal
-  if (productId) {
+  if (userId && productId && price && quantity) {
     const newOrder = await Order.create({
       status: "procesando",
     });
@@ -36,7 +36,7 @@ let amountFinal
     user_order = `${userId}:${orderDetail.dataValues.orderId}`
     amountFinal = price * quantity * 100
     
-  } else if (!productId) {
+  } else if (userId && !productId && !price && !quantity) {
     const order = await Order.findOne({
       where: {
         userId: userId,
@@ -53,6 +53,7 @@ let amountFinal
     amountFinal = calculateOrderAmount(detail)
   }
 
+  if (userId) {
   const paymentIntent = await stripe.paymentIntents.create({
     amount: amountFinal,
     description: user_order,
@@ -60,6 +61,9 @@ let amountFinal
     automatic_payment_methods: { enabled: true },
   });
   res.send({ clientSecret: paymentIntent.client_secret });
+} else {
+  res.status(404).send({message: "missing data"});
+}
 });
 
 module.exports = route;
