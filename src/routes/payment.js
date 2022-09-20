@@ -23,58 +23,64 @@ route.post("/create-payment-intent", async (req, res) => {
   let user_order;
   let amountFinal;
   let orderDetail
-
-  if (userId && productId && price && quantity) {
-    const newOrder = await Order.create({
-      status: "procesando",
-    });
-
-    await newOrder.addUser(userId);
-
-    orderDetail = await OrderDetail.create({
-      price,
-      quantity,
-      orderId: newOrder.id,
-      productId: productId,
-    });
-
-    user_order = `${userId}:${orderDetail.dataValues.orderId}`;
-    amountFinal = price * quantity * 100;
-
-  } else if (userId && !productId && !price && !quantity) {
-    const order = await Order.findOne({
-      where: {
-        userId: userId,
-        status: "carrito",
-      },
-    });
-
-    if (order) {
-      orderDetail = await OrderDetail.findAll({
+  try {
+    if (userId && productId && price && quantity) {
+      const newOrder = await Order.create({
+        status: "procesando",
+      });
+  
+      await newOrder.addUser(userId);
+  
+      orderDetail = await OrderDetail.create({
+        price,
+        quantity,
+        orderId: newOrder.id,
+        productId: productId,
+      });
+  
+      user_order = `${userId}:${orderDetail.dataValues.orderId}`;
+      amountFinal = price * quantity * 100;
+  
+    } else if (userId && !productId && !price && !quantity) {
+      const order = await Order.findOne({
         where: {
-          orderId: order.dataValues.id,
+          userId: userId,
+          status: "carrito",
         },
       });
-
-      
-      if (orderDetail) {
-        user_order = `${userId}:${orderDetail[0].dataValues.orderId}`;
-        amountFinal = calculateOrderAmount(orderDetail);
+  
+      if (order) {
+        orderDetail = await OrderDetail.findAll({
+          where: {
+            orderId: order.dataValues.id,
+          },
+        });
+  
+        
+        if (orderDetail.dataValues) {
+          user_order = `${userId}:${orderDetail[0].dataValues.orderId}`;
+          amountFinal = calculateOrderAmount(orderDetail);
+        }
       }
     }
+  
+    if (userId && user_order && amountFinal) {
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amountFinal,
+        description: user_order,
+        currency: "ars",
+        automatic_payment_methods: { enabled: true },
+      });
+      res.send({ clientSecret: paymentIntent.client_secret });
+    } else {
+      res.status(404).send({ message: "missing data" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error)
   }
 
-  if (userId && user_order && amountFinal) {
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: amountFinal,
-      description: user_order,
-      currency: "ars",
-      automatic_payment_methods: { enabled: true },
-    });
-    res.send({ clientSecret: paymentIntent.client_secret });
-  } else {
-    res.status(404).send({ message: "missing data" });
-  }
+
 });
 
 module.exports = route;
