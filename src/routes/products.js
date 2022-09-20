@@ -130,8 +130,10 @@ route.post("/", isAdmin, async (req, res, next) => {
 
 route.put("/delete/:id", isAdmin, async (req, res, next) => {
   const { id } = req.params;
+  const { status } = req.body
   try {
-    const deletedProduct = await Product.destroy({
+    const deletedProduct = await Product.update({
+      status,
       where: {
         id,
       },
