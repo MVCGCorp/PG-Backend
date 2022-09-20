@@ -33,6 +33,7 @@ let amountFinal
       orderId: newOrder.id,
       productId: productId,
     });
+    
     user_order = `${userId}:${orderDetail.dataValues.orderId}`
     amountFinal = price * quantity * 100
     
@@ -60,7 +61,7 @@ let amountFinal
     currency: "ars",
     automatic_payment_methods: { enabled: true },
   });
-  
+
   res.send({ clientSecret: paymentIntent.client_secret });
 } else {
   res.status(404).send({message: "missing data"});
