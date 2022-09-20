@@ -1,6 +1,6 @@
 const express = require("express");
 const route = express.Router();
-const {User, Order, OrderDetail } = require("../db.js");
+const { Order, OrderDetail } = require("../db.js");
 const { STRIPE } = process.env;
 const stripe = require("stripe")(STRIPE);
 
@@ -29,7 +29,7 @@ route.post("/create-payment-intent", async (req, res) => {
       status: "procesando",
     });
 
-    await newOrder.addUser(userId);
+    await newOrder.setUser(userId);
 
     orderDetail = await OrderDetail.create({
       price,
