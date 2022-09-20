@@ -32,8 +32,9 @@ let amountFinal
       quantity,
       orderId: newOrder.id,
       productId: productId,
+      
     });
-    
+
     user_order = `${userId}:${orderDetail.dataValues.orderId}`
     amountFinal = price * quantity * 100
     
