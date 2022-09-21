@@ -5,7 +5,6 @@ const { Product, User, Order, OrderDetail, Favourites } = require("../db.js");
 
 const isAdminGod = require("../Middlewares/isAdminGod.js");
 
-
 route.get("/", async (req, res, next) => {
   const { email } = req.query;
   try {
@@ -202,25 +201,26 @@ route.post("/:id/cart", (req, res) => {
 //Ruta GET para traer los productos del carrito de un usuario
 
 route.get("/:id/order", (req, res) => {
-//  let { id }  = req.params;
-//  let { status} = req.query
+  //  let { id }  = req.params;
+  //  let { status} = req.query
   let { id } = req.query;
 
-//  Order.findOne({
- //   where: {
+  //  Order.findOne({
+  //   where: {
   //    userId: id,
   //    status: status,
   //  },
-//  })
-//    .then((order) => {
-      OrderDetail.findAll({
-        where: {
-          orderId: id,
-        },
-      }).then((orderdetail) => {
-        res.status(200).json(orderdetail);
-      })
-//    })
+  //  })
+  //    .then((order) => {
+  OrderDetail.findAll({
+    where: {
+      orderId: id,
+    },
+  })
+    .then((orderdetail) => {
+      res.status(200).json(orderdetail);
+    })
+    //    })
     .catch((err) => {
       res.status(400).json("Order not found" + err);
     });
@@ -238,7 +238,6 @@ route.get("/:id/precio_final", async (req, res) => {
       },
     });
 
-    
     const detail = await OrderDetail.findAll({
       where: {
         orderId: order.dataValues.id,
@@ -249,9 +248,9 @@ route.get("/:id/precio_final", async (req, res) => {
       .map((data) => data.price * data.quantity)
       .reduce((a, b) => a + b, 0);
 
-    res.status(200).json({precio_final: precio_final});
+    res.status(200).json({ precio_final: precio_final });
   } catch (error) {
-    res.status(404).send({menssage: "id not found"});
+    res.status(404).send({ menssage: "id not found" });
   }
 });
 //Ruta GET para traer las ordenes de un usuario
@@ -318,27 +317,37 @@ route.delete("/:id/cart/delete", async (req, res) => {
 //Ruta PUT para modificar la cantidad de un item del carrito
 
 route.put("/:id/cart", async (req, res) => {
-  const userId = req.params;
+  const id = req.params;
   const { productId, quantity, orderId } = req.body;
 
   try {
-    const quantityUpdate = await OrderDetail.update(
-      {
-        quantity: quantity,
+    const order = await Order.findOne({
+      where: {
+        userId: id,
+        status: "carrito",
       },
-      {
-        where: {
-          orderId: orderId,
-          productId: productId,
+    });
+
+    if (order) {
+      const quantityUpdate = await OrderDetail.update(
+        {
+          quantity: quantity,
         },
-      }
-    );
-    // console.log(quantityUpdate);
-    if (quantityUpdate)
-      return res.send(`${quantityUpdate} product quantity has been updated`);
+        {
+          where: {
+            orderId: orderId,
+            productId: productId,
+          },
+        }
+      );
+      // console.log(quantityUpdate);
+      if (quantityUpdate)
+        return res.send(`${quantityUpdate} product quantity has been updated`);
+    }
 
     return res.status(400).json({ msg: "Update cannot be done" });
   } catch (error) {
+    console.log(error);
     res.status(404).send(error);
   }
 });
@@ -348,20 +357,20 @@ route.put("/:id/cart", async (req, res) => {
 */
 
 route.post("/favourites/:id", async (req, res) => {
-  let { id } = req.params
-  let { productId } = req.body
+  let { id } = req.params;
+  let { productId } = req.body;
 
-  console.log('id', id)
-  console.log('productId', productId)
-  
+  console.log("id", id);
+  console.log("productId", productId);
+
   if (!productId) {
     return res.status(400).send("Some data is missing");
   }
   try {
     let [favSaved, Created] = await Favourites.findOrCreate({
-      where: { 
+      where: {
         userId: id,
-        productId: productId
+        productId: productId,
       },
     });
     // await favSaved.addProduct(productId, { through: Favourites });
@@ -372,41 +381,40 @@ route.post("/favourites/:id", async (req, res) => {
     console.log(err.message);
     res.status(404).json(err.message);
   }
-  });
+});
 
-
-  route.get("/favourites/:id", async (req, res) => {
-    const { id } = req.params;
-    try {
-      if (id) {
-          let favs = await Favourites.findAll({ 
-            where: { userId: id },
-          });
-          res.json(favs)
-          console.log('fav', favs)
-      } else {
-          res.status(404).send({ msg: "Faltan datos" });
-      }
-  } catch (err) {
-      console.log(err);
-  }
-    });
-
-  route.delete("/favourites/:userId", async (req, res) => {
-    const { userId } = req.params;
-    const { id } = req.query;
-    try {
-      const fav = await Favourites.destroy({
-        where: {
-          userId,
-          id
-        },
+route.get("/favourites/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    if (id) {
+      let favs = await Favourites.findAll({
+        where: { userId: id },
       });
-      return res.status(200).send(`${fav} deleted`);
-    } catch (error) {
-      console.log(error);
-      return res.send(error);
+      res.json(favs);
+      console.log("fav", favs);
+    } else {
+      res.status(404).send({ msg: "Faltan datos" });
     }
-  });
-  
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+route.delete("/favourites/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const { id } = req.query;
+  try {
+    const fav = await Favourites.destroy({
+      where: {
+        userId,
+        id,
+      },
+    });
+    return res.status(200).send(`${fav} deleted`);
+  } catch (error) {
+    console.log(error);
+    return res.send(error);
+  }
+});
+
 module.exports = route;
