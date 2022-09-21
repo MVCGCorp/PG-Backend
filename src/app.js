@@ -10,6 +10,7 @@ const orderRouter = require("./routes/order")
 const paymentRouter = require("./routes/payment")
 const stripeRouter = require("./routes/stripe")
 const reviewRouter = require("./routes/review")
+const imageRouter = require("./routes/image")
 const auth = require("./routes/auth")
 const { CORS_URL } = process.env //variable de entorno local => CORS_URL=http://localhost:3000
 
@@ -49,6 +50,7 @@ app.use("/review", reviewRouter);
 app.use("/auth", auth);
 app.use("/payment", paymentRouter);
 app.use("/order", orderRouter);
+app.use("/image", imageRouter);
 
 app.get("/", (req, res) => {
   res.send(
