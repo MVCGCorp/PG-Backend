@@ -318,7 +318,7 @@ route.delete("/:id/cart/delete", async (req, res) => {
 
 route.put("/:id/cart", async (req, res) => {
   const id = req.params;
-  const { productId, quantity, orderId } = req.body;
+  const { productId, count } = req.body;
 
   try {
     const order = await Order.findOne({
@@ -331,11 +331,11 @@ route.put("/:id/cart", async (req, res) => {
     if (order) {
       const quantityUpdate = await OrderDetail.update(
         {
-          quantity: quantity,
+          quantity: count,
         },
         {
           where: {
-            orderId: orderId,
+            orderId: order.id,
             productId: productId,
           },
         }
