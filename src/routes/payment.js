@@ -57,7 +57,7 @@ route.post("/create-payment-intent", async (req, res) => {
         });
   
         
-        if (orderDetail.dataValues) {
+        if (orderDetail[0].dataValues) {
           user_order = `${userId}:${orderDetail[0].dataValues.orderId}`;
           amountFinal = calculateOrderAmount(orderDetail);
         }
