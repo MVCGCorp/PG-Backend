@@ -55,7 +55,7 @@ let capsEntries = entries.map((entry) => [
 ]);
 sequelize.models = Object.fromEntries(capsEntries);
 
-const { Product, Category, User, Order, OrderDetail, Review, Favourites } = sequelize.models;
+const { Product, Category, User, Order, OrderDetail, Review, Favourites, Image } = sequelize.models;
 
 // console.log('order', OrderDetail)
 
@@ -74,6 +74,9 @@ Order.belongsTo(User) ;//, {through: "OrderUser"}
 
 Product.hasMany(Review);
 Review.belongsTo(Product);
+
+Product.hasMany(Image);
+Image.belongsTo(Product);
 
 User.hasMany(Review);
 Review.belongsTo(User);
