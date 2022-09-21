@@ -132,8 +132,7 @@ route.put("/delete/:id", isAdmin, async (req, res, next) => {
   const { id } = req.params;
   const { status } = req.body
   try {
-    const deletedProduct = await Product.update({
-      status,
+    const deletedProduct = await Product.destroy({
       where: {
         id,
       },
