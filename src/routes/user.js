@@ -154,77 +154,191 @@ route.delete("/:id", isAdminGod, async (req, res, next) => {
 // Pendiente hacer las rutas de orden.
 //Pendiente charlar con la gente de Front si estas siguiendo la misma idea
 
-//Ruta POST para agregar productos al carrito
 
-route.post("/:id/cart", (req, res) => {
-  const productId = req.body.prodTotal.prodDetail.id;
-  const price = req.body.prodTotal.prodDetail.price;
+//********************* rutas nuevas ***************************************************/
+route.get("/:id/order", async (req, res) => {
+  let estados = [
+    "carrito",
+    "procesando",
+    "completada",
+    "rechazada",
+    "entregada",
+  ];
+  let { id } = req.params;
+  let { status } = req.query;
 
-  const quantity = req.body.prodTotal.quantity;
-  const { id } = req.params;
-  if (id) {
-    Order.findOne({ where: { userId: id, status: "carrito" } })
-      .then((order) => {
-        if (!order) {
-          return Order.create({
-            status: "carrito",
-          });
-        }
-        return order;
-      })
-      .then((order) => {
-        return order.setUser(id);
-      })
-      .then((order) => {
-        if (productId) {
-          return OrderDetail.create({
-            price,
-            quantity,
-            orderId: order.id,
-            productId: productId,
-          });
-        }
+  if (!id && !status) {
+    return res.status(400).send("Some data is missing");
+  }
 
-        return order;
-      })
-      .then((order) => {
-        return res.status(200).send(order);
-      })
-      .catch((err) => {
-        return res.status(400).json(err);
+  if (estados.indexOf(status) === -1) {
+    return res.status(400).send("Status not found");
+  }
+
+  try {
+    let order = await Order.findAll({
+      where: {
+        userId: +id,
+        status: status,
+      },
+    });
+
+    if (order.length > 0) {
+      let orderDetail = await OrderDetail.findAll({
+        where: {
+          orderId: order[0].id,
+        },
       });
-  } else {
-    return res.status(200).json("User missing");
+
+      if (orderDetail) {
+        res.status(200).json(orderDetail);
+      } else {
+        res.status(404).send("Products not found");
+      }
+    } else {
+      res.status(404).send("Order not found");
+    }
+  } catch (error) {
+    console.log(error.menssage);
+    res.status(404).send(error.menssage);
   }
 });
 
+route.post("/:id/cart", async (req, res) => {
+  const prodId = req.body.data.prodTotal.prodDetail.id;
+  const price = req.body.data.prodTotal.prodDetail.price;
+  const quantity = req.body.data.prodTotal.quantity;
+  const { id } = req.params;
+
+  if (!prodId && !price && !quantity && !id) {
+    return res.status(400).send("Some data is missing");
+  }
+
+  try {
+    let order = await Order.findOne({
+      where: {
+        userId: +id,
+      },
+    });
+
+    if (!order) {
+      order = await Order.create({ status: "carrito" });
+      await order.setUser(+id);
+    }
+
+    let product = await Product.findByPk(prodId);
+    let orderDetail;
+
+    if (product) {
+      let repeated = await OrderDetail.findOne({
+        where: {
+          orderId: order.id,
+          productId: prodId,
+        },
+      });
+      if (repeated) {
+        res.status(404).send("Product repeated");
+      }
+
+      orderDetail = await OrderDetail.create({
+        price,
+        quantity,
+        orderId: order.id,
+        productId: prodId,
+      });
+    } else {
+      res.status(404).send("Product not found");
+    }
+
+    if (orderDetail) {
+      console.log(orderDetail.dataValues);
+      res.status(200).json("product Created");
+    } else {
+      res.status(404).send("product not Created");
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.status(404).send(error.menssage);
+  }
+});
+
+//********************* rutas viejas ***************************************************/
+//Ruta POST para agregar productos al carrito
+
+// route.post("/:id/cart", (req, res) => {
+//   const productId = req.body.prodTotal.prodDetail.id;
+//   const price = req.body.prodTotal.prodDetail.price;
+
+//   const quantity = req.body.prodTotal.quantity;
+//   const { id } = req.params;
+//   if (id) {
+//     Order.findOne({ where: { userId: id, status: "carrito" } })
+//       .then((order) => {
+//         if (!order) {
+//           return Order.create({
+//             status: "carrito",
+//           });
+//         }
+//         return order;
+//       })
+//       .then((order) => {
+//         return order.setUser(id);
+//       })
+//       .then((order) => {
+//         if (productId) {
+//           return OrderDetail.create({
+//             price,
+//             quantity,
+//             orderId: order.id,
+//             productId: productId,
+//           });
+//         }
+
+//         return order;
+//       })
+//       .then((order) => {
+//         return res.status(200).send(order);
+//       })
+//       .catch((err) => {
+//         return res.status(400).json(err);
+//       });
+//   } else {
+//     return res.status(200).json("User missing");
+//   }
+// });
+
 //Ruta GET para traer los productos del carrito de un usuario
 
-route.get("/:id/order", (req, res) => {
+// route.get("/:id/order", (req, res) => {
   //  let { id }  = req.params;
   //  let { status} = req.query
-  let { id } = req.query;
-
+  
   //  Order.findOne({
-  //   where: {
+    //   where: {
   //    userId: id,
   //    status: status,
   //  },
   //  })
   //    .then((order) => {
-  OrderDetail.findAll({
-    where: {
-      orderId: id,
-    },
-  })
-    .then((orderdetail) => {
-      res.status(200).json(orderdetail);
-    })
-    //    })
-    .catch((err) => {
-      res.status(400).json("Order not found" + err);
-    });
-});
+//***********************                        ***********************/
+//     let { id } = req.query;
+//   OrderDetail.findAll({
+//     where: {
+//       orderId: id,
+//     },
+//   })
+//     .then((orderdetail) => {
+//       res.status(200).json(orderdetail);
+//     })
+//     //    })
+//     .catch((err) => {
+//       res.status(400).json("Order not found" + err);
+//     });
+// });
+
+
+//********************************************************************************************/
+
 
 //Ruta GET para calcular el precio final de venta
 route.get("/:id/precio_final", async (req, res) => {
