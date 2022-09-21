@@ -5,11 +5,9 @@ const route = express.Router();
 const { Product, Category } = require("../db.js");
 const { Sequelize, Op } = require("sequelize");
 
+const isAdmin = require("../Middlewares/isAdmin.js");
 
-const isAdmin = require('../Middlewares/isAdmin.js')
-
-// GET por nombre y todas. 
-
+// GET por nombre y todas.
 
 route.get("/", async (req, res) => {
   let { name } = req.query;
@@ -55,9 +53,7 @@ route.get("/:id", async (req, res) => {
 //POST: agregar una categoría.  faltaria validar que solo pueda hacerlo un admin
 
 route.post("/", isAdmin, async (req, res) => {
-  const {
-    name,
-  } = req.body;
+  const { name } = req.body;
 
   if (!name) {
     return res.status(400).send("Some data is missing");
@@ -76,7 +72,7 @@ route.post("/", isAdmin, async (req, res) => {
 });
 
 route.put("/delete/:id", isAdmin, async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
 
   try {
     const deletedCategory = await Category.destroy({
@@ -92,12 +88,13 @@ route.put("/delete/:id", isAdmin, async (req, res) => {
 
 route.put("/:id", isAdmin, async (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const { name, status } = req.body;
 
   try {
     const category_Id = await Category.update(
       {
         name,
+        status,
       },
       {
         where: {
