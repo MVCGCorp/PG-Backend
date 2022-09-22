@@ -30,7 +30,7 @@ route.post("/webhook", express.raw({ type: "application/json" }),
         ? "completada"
         : event.type === "charge.failed"
         ? "rechazada"
-        : "procesando",
+        : "carrito",
   });
   return res.send({[event.type]: `usuario: ${userId} y orden: ${orderId}`})
 }
