@@ -6,6 +6,7 @@ const stripe = require("stripe")(STRIPE);
 const { Op } = require("sequelize");
 
 
+
 const calculateOrderAmount = (detail) => {
   try {
     const precio_final =
