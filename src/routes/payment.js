@@ -3,6 +3,7 @@ const route = express.Router();
 const { User, Order, OrderDetail, Product } = require("../db.js");
 const { STRIPE } = process.env;
 const stripe = require("stripe")(STRIPE);
+const { Op } = require("sequelize");
 
 const calculateOrderAmount = (detail) => {
   try {
