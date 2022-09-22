@@ -84,12 +84,14 @@ route.post("/create-payment-intent", async (req, res) => {
 });
 
 route.put('/prod', async (req, res)=>{
-  const {stock,id} = req.body;
+  const { stock, id } = req.body;
+  console.log(stock)
+  console.log(id)
   try {
     if(stock && id){
       
       const product = await Product.findByPk(id);
-      const newstock = await Product.update(
+      const prodUpdate = await product.update(
         {
           stock: product.stock - stock,
         },
@@ -99,11 +101,13 @@ route.put('/prod', async (req, res)=>{
           },
         }
         )
-        const newStock = await Product.findByPk(id);
-        res.status(200).json(newStock.stock)
+        // const newStock = await Product.findByPk(id);
+        console.log(prodUpdate.stock)
+        res.status(200).send(`new stock is ${prodUpdate.stock}`)
     }
       }catch (error) {
         console.log(error) 
+        res.send(error)
     }
   })
    
