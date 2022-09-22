@@ -24,24 +24,26 @@ route.post("/create-payment-intent", async (req, res) => {
   let amountFinal;
   let orderDetail
   try {
-    if (userId && productId && price && quantity) {
-      const newOrder = await Order.create({
-        status: "procesando",
-      });
+    // if (userId && productId && price && quantity) {
+    //   const newOrder = await Order.create({
+    //     status: "procesando",
+    //   });
   
-      await newOrder.addUser(userId);
+    //   await newOrder.addUser(userId);
   
-      orderDetail = await OrderDetail.create({
-        price,
-        quantity,
-        orderId: newOrder.id,
-        productId: productId,
-      });
+    //   orderDetail = await OrderDetail.create({
+    //     price,
+    //     quantity,
+    //     orderId: newOrder.id,
+    //     productId: productId,
+    //   });
   
-      user_order = `${userId}:${orderDetail.dataValues.orderId}`;
-      amountFinal = price * quantity * 100;
+    //   user_order = `${userId}:${orderDetail.dataValues.orderId}`;
+    //   amountFinal = price * quantity * 100;
   
-    } else if (userId && !productId && !price && !quantity) {
+    // } else 
+    // && !productId && !price && !quantity
+    if (userId ) {
       const order = await Order.findOne({
         where: {
           userId: userId,
