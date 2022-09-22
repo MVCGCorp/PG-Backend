@@ -1,6 +1,6 @@
 const express = require("express");
 const route = express.Router();
-const {User, Order, OrderDetail } = require("../db.js");
+const {User, Order, OrderDetail, Product } = require("../db.js");
 const { STRIPE } = process.env;
 const stripe = require("stripe")(STRIPE);
 
@@ -82,5 +82,30 @@ route.post("/create-payment-intent", async (req, res) => {
 
 
 });
+
+route.put('/prod', async (req, res)=>{
+  const {stock,id} = req.body;
+  try {
+    if(stock && id){
+      
+      const product = await Product.findByPk(id);
+      const newstock = await Product.update(
+        {
+          stock: product.stock - stock,
+        },
+        {
+          where: {
+            id: id,
+          },
+        }
+        )
+        const newStock = await Product.findByPk(id);
+        res.status(200).json(newStock.stock)
+    }
+      }catch (error) {
+        console.log(error) 
+    }
+  })
+   
 
 module.exports = route;
