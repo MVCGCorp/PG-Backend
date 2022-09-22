@@ -64,7 +64,7 @@ route.post("/create-payment-intent", async (req, res) => {
       return res.status(404).send("OrderDetail Error");
     }
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: !precio_final,
+      amount: precio_final,
       description: user_order,
       currency: "ars",
       automatic_payment_methods: { enabled: true },
